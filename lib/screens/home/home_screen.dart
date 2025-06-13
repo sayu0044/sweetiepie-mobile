@@ -512,30 +512,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       onTap: () async {
                                         print(
                                             'HomeScreen: Adding product to cart: ${product.id} - ${product.name}');
-                                        try {
-                                          await cartController
-                                              .addToCart(product, quantity: 1);
-                                          Get.snackbar(
-                                            'Success',
-                                            '${product.name} added to cart',
-                                            backgroundColor:
-                                                AppTheme.primaryColor,
-                                            colorText: Colors.white,
-                                            duration:
-                                                const Duration(seconds: 1),
-                                          );
-                                        } catch (e) {
-                                          print(
-                                              'HomeScreen: Error adding to cart: $e');
-                                          Get.snackbar(
-                                            'Error',
-                                            'Failed to add ${product.name} to cart',
-                                            backgroundColor: Colors.red,
-                                            colorText: Colors.white,
-                                            duration:
-                                                const Duration(seconds: 2),
-                                          );
-                                        }
+                                        await cartController
+                                            .addToCart(product, quantity: 1);
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.all(8),

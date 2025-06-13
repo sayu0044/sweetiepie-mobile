@@ -5,6 +5,7 @@ import 'package:sweetipie/models/cart.dart';
 import 'package:sweetipie/models/product.dart';
 import 'package:sweetipie/theme/app_theme.dart';
 import 'package:sweetipie/widgets/bottom_nav_bar.dart';
+import 'package:sweetipie/utils/notification_utils.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -439,13 +440,7 @@ class _CartScreenState extends State<CartScreen> {
                               if (success) {
                                 Get.toNamed('/checkout');
                               } else {
-                                Get.snackbar(
-                                  'Error',
-                                  'Gagal memproses checkout. Silakan coba lagi.',
-                                  snackPosition: SnackPosition.BOTTOM,
-                                  backgroundColor: Colors.red,
-                                  colorText: Colors.white,
-                                );
+                                NotificationUtils.showError('Gagal memproses checkout. Silakan coba lagi.');
                               }
                             }
                           : null,

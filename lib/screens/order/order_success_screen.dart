@@ -15,7 +15,7 @@ class OrderSuccessScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.pink[50],
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -171,7 +171,7 @@ class OrderSuccessScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 48),
+              const SizedBox(height: 32),
 
               // Action Buttons
               Column(

@@ -1,10 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sweetipie/controllers/cart_controller.dart';
 import 'package:sweetipie/models/cart.dart';
 import 'package:sweetipie/models/order.dart';
-
 import 'package:sweetipie/models/product.dart';
 import 'package:sweetipie/services/auth_service.dart';
+import 'package:sweetipie/utils/debug_orders.dart';
+import 'package:sweetipie/utils/notification_utils.dart';
 
 import 'package:pocketbase/pocketbase.dart';
 
@@ -96,24 +98,12 @@ class CheckoutController extends GetxController {
   // Process checkout
   Future<void> processCheckout() async {
     if (selectedPaymentMethod.value.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'Silakan pilih metode pembayaran',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Get.theme.colorScheme.error,
-        colorText: Get.theme.colorScheme.onError,
-      );
+      NotificationUtils.showError('Silakan pilih metode pembayaran');
       return;
     }
 
     if (cartItemsWithProducts.isEmpty) {
-      Get.snackbar(
-        'Error',
-        'Tidak ada item untuk checkout',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Get.theme.colorScheme.error,
-        colorText: Get.theme.colorScheme.onError,
-      );
+      NotificationUtils.showError('Tidak ada item untuk checkout');
       return;
     }
 
@@ -134,14 +124,7 @@ class CheckoutController extends GetxController {
       print('CheckoutController: Selected items removed from cart');
 
       // 4. Show success message
-      Get.snackbar(
-        'Pesanan Berhasil!',
-        'Pesanan Anda telah dibuat dengan nomor: ${order.id}',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Get.theme.colorScheme.primary,
-        colorText: Get.theme.colorScheme.onPrimary,
-        duration: const Duration(seconds: 5),
-      );
+      NotificationUtils.showOrderSuccess(order.id);
 
       // 5. Navigate to order payment screen
       Get.offAllNamed('/order-payment', arguments: {
@@ -150,13 +133,23 @@ class CheckoutController extends GetxController {
 
     } catch (e) {
       print('CheckoutController: Error processing checkout: $e');
-      Get.snackbar(
-        'Error',
-        'Gagal memproses pesanan. Silakan coba lagi.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Get.theme.colorScheme.error,
-        colorText: Get.theme.colorScheme.onError,
-      );
+      
+      // Run debug tests when checkout fails
+      print('🔍 Running debug tests to identify the issue...');
+      await DebugOrdersUtil.testOrdersCollection();
+      await DebugOrdersUtil.suggestAccessRules();
+      
+      // Check if it's a collections issue
+      if (e.toString().contains('Failed to create record') || 
+          e.toString().contains('status: 400') ||
+          e.toString().contains('collection')) {
+        NotificationUtils.showError(
+          'Collection "orders" belum dibuat di PocketBase. Silakan buat collection orders dan order_items terlebih dahulu.',
+          title: 'Database Error',
+        );
+      } else {
+        NotificationUtils.showError('Gagal memproses pesanan. Silakan coba lagi.');
+      }
     } finally {
       isProcessing.value = false;
     }
@@ -169,19 +162,42 @@ class CheckoutController extends GetxController {
       throw Exception('User not authenticated');
     }
 
-    final orderData = {
+    // Format order data properly for PocketBase
+    final orderData = <String, dynamic>{
       'users_id': userId,
       'payment_method': selectedPaymentMethod.value,
       'status': 'pending',
-      'total_price': totalPrice.value,
-      'order_date': DateTime.now().toIso8601String().split('T')[0],
-      'catatan': orderNotes.value.isEmpty ? null : orderNotes.value,
+      'total_price': totalPrice.value.toDouble(), // Ensure it's a double
+      'order_date': DateTime.now().toIso8601String().split('T')[0], // Date only
     };
+
+    // Only add catatan if it's not empty
+    if (orderNotes.value.isNotEmpty) {
+      orderData['catatan'] = orderNotes.value;
+    }
 
     print('CheckoutController: Creating order with data: $orderData');
 
-    final record = await pb.collection('orders').create(body: orderData);
-    return Order.fromJson(record.data);
+    try {
+      final record = await pb.collection('orders').create(body: orderData);
+      print('CheckoutController: Order record created successfully: ${record.data}');
+      return Order.fromJson(record.data);
+    } catch (e) {
+      print('CheckoutController: Detailed error creating order: $e');
+      
+      // Try with minimal data first to isolate the issue
+      final minimalData = <String, dynamic>{
+        'users_id': userId,
+        'payment_method': selectedPaymentMethod.value,
+        'status': 'pending',
+        'total_price': totalPrice.value.toDouble(),
+        'order_date': DateTime.now().toIso8601String().split('T')[0],
+      };
+      
+      print('CheckoutController: Retrying with minimal data: $minimalData');
+      final record = await pb.collection('orders').create(body: minimalData);
+      return Order.fromJson(record.data);
+    }
   }
 
   // Create order items in PocketBase
@@ -193,17 +209,23 @@ class CheckoutController extends GetxController {
       if (product != null) {
         final subtotal = cart.jumlahBarang * product.price;
         
-        final orderItemData = {
+        final orderItemData = <String, dynamic>{
           'order_id': orderId,
           'products_id': cart.productsId,
           'quantity': cart.jumlahBarang,
-          'unit_price': product.price,
-          'subtotal': subtotal,
+          'unit_price': product.price.toDouble(), // Ensure it's a double
+          'subtotal': subtotal.toDouble(), // Ensure it's a double
         };
 
         print('CheckoutController: Creating order item: $orderItemData');
 
-        await pb.collection('order_items').create(body: orderItemData);
+        try {
+          await pb.collection('order_items').create(body: orderItemData);
+          print('CheckoutController: Order item created successfully');
+        } catch (e) {
+          print('CheckoutController: Error creating order item: $e');
+          throw e; // Re-throw to handle in parent function
+        }
       }
     }
   }

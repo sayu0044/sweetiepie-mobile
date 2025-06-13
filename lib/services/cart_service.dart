@@ -1,9 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:get/get.dart';
 import 'package:sweetipie/models/cart.dart';
 import 'package:sweetipie/models/product.dart';
 import 'package:sweetipie/services/auth_service.dart';
 import 'package:sweetipie/services/database_service.dart';
+import 'package:sweetipie/utils/notification_utils.dart';
 
 class CartService extends GetxController {
   final PocketBase pb = PocketBase('http://127.0.0.1:8090');
@@ -195,7 +197,7 @@ class CartService extends GetxController {
         );
 
         if (updated) {
-          Get.snackbar('Success', 'Cart updated successfully');
+          NotificationUtils.showCartUpdated();
           await fetchCartItems();
           return true;
         }
@@ -218,7 +220,7 @@ class CartService extends GetxController {
         _calculateTotalPrice();
         _calculateSelectedTotalPrice();
 
-        Get.snackbar('Success', 'Item added to cart');
+        NotificationUtils.showSuccess('Item ditambahkan ke keranjang');
         await fetchCartItems();
         return true;
       }
@@ -332,7 +334,7 @@ class CartService extends GetxController {
       _calculateTotalPrice();
       _calculateSelectedTotalPrice();
 
-      Get.snackbar('Success', 'Item removed from cart');
+      NotificationUtils.showCartRemoved();
       await fetchCartItems();
       return true;
     } catch (e) {
@@ -348,7 +350,7 @@ class CartService extends GetxController {
         cartItems.removeWhere((item) => item.id == cartId);
         _calculateTotalPrice();
         _calculateSelectedTotalPrice();
-        Get.snackbar('Success', 'Item removed from cart');
+        NotificationUtils.showCartRemoved();
         await fetchCartItems();
         return true;
       } else {
