@@ -438,6 +438,14 @@ class _CartScreenState extends State<CartScreen> {
                                   await cartController.proceedToCheckout();
                               if (success) {
                                 Get.toNamed('/checkout');
+                              } else {
+                                Get.snackbar(
+                                  'Error',
+                                  'Gagal memproses checkout. Silakan coba lagi.',
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  backgroundColor: Colors.red,
+                                  colorText: Colors.white,
+                                );
                               }
                             }
                           : null,

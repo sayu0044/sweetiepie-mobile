@@ -48,7 +48,10 @@ class LikeService extends GetxController {
       if (authToken != null && authModel != null) {
         pb.authStore.save(authToken, authModel);
         print('LikeService: Auth synced from AuthService');
-        print('LikeService: Token: ${authToken.substring(0, 20)}...');
+        final tokenPreview = authToken.length > 20 
+            ? '${authToken.substring(0, 20)}...' 
+            : authToken;
+        print('LikeService: Token: $tokenPreview');
         print('LikeService: User ID: ${authModel.id}');
       } else {
         print('LikeService: No auth to sync');

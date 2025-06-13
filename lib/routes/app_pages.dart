@@ -9,6 +9,7 @@ import 'package:sweetipie/screens/checkout/checkout_screen.dart';
 import 'package:sweetipie/screens/debug/debug_screen.dart';
 import 'package:sweetipie/screens/favorite/favorite_screen.dart';
 import 'package:sweetipie/screens/home/home_screen.dart';
+import 'package:sweetipie/screens/order/order_payment_screen.dart';
 import 'package:sweetipie/screens/order/order_success_screen.dart';
 import 'package:sweetipie/screens/splash/splash_screen.dart';
 import 'package:sweetipie/screens/account/settings_screen.dart';
@@ -42,6 +43,7 @@ class AppPages {
     GetPage(name: Routes.FAVORITE, page: () => const FavoriteScreen()),
     GetPage(name: Routes.CART, page: () => const CartScreen()),
     GetPage(name: Routes.CHECKOUT, page: () => const CheckoutScreen()),
+    GetPage(name: Routes.ORDER_PAYMENT, page: () => const OrderPaymentScreen()),
     GetPage(name: Routes.ORDER_SUCCESS, page: () => const OrderSuccessScreen()),
     GetPage(name: Routes.ACCOUNT, page: () => const AccountScreen()),
     GetPage(name: Routes.SETTINGS, page: () => const SettingsScreen()),

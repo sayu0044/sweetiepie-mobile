@@ -13,7 +13,11 @@ class ApiDebugHelper {
     print('Auth Status: ${authService.isAuthenticated}');
     print('User ID: ${authService.currentUser.value?.id}');
     print('Auth Token Valid: ${pb.authStore.isValid}');
-    print('Auth Token: ${pb.authStore.token?.substring(0, 20)}...');
+    final debugToken = pb.authStore.token;
+    final debugTokenPreview = debugToken != null && debugToken.length > 20 
+        ? '${debugToken.substring(0, 20)}...' 
+        : debugToken ?? 'null';
+    print('Auth Token: $debugTokenPreview');
 
     try {
       // Test 1: Check if collection exists and accessible

@@ -41,7 +41,7 @@ class CheckoutScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Your cart is empty',
+                  'No items to checkout',
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.grey[600],
@@ -63,16 +63,20 @@ class CheckoutScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Store Info Card
+              _buildStoreInfo(),
+              const SizedBox(height: 24),
+
               // Order Summary
               _buildOrderSummary(controller),
               const SizedBox(height: 24),
 
-              // Customer Information
-              _buildCustomerInfo(controller),
-              const SizedBox(height: 24),
-
               // Payment Methods
               _buildPaymentMethods(controller),
+              const SizedBox(height: 24),
+
+              // Notes Section
+              _buildNotesSection(controller),
               const SizedBox(height: 24),
 
               // Price Breakdown
@@ -85,6 +89,59 @@ class CheckoutScreen extends StatelessWidget {
           ),
         );
       }),
+    );
+  }
+
+  Widget _buildStoreInfo() {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.store_outlined, color: AppTheme.primaryColor),
+                const SizedBox(width: 8),
+                const Text(
+                  'Sweetie Pie Official Store',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.blue[50],
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.blue[200]!),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline, color: Colors.blue[700], size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Ambil pesanan langsung di toko atau bayar di kasir',
+                      style: TextStyle(
+                        color: Colors.blue[700],
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -152,11 +209,12 @@ class CheckoutScreen extends StatelessWidget {
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                             ),
-                            maxLines: 1,
+                            maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
+                          const SizedBox(height: 4),
                           Text(
-                            'Qty: ${cart.jumlahBarang}',
+                            '\$${product.price.toStringAsFixed(2)} × ${cart.jumlahBarang}',
                             style: TextStyle(
                               color: Colors.grey[600],
                               fontSize: 12,
@@ -170,91 +228,13 @@ class CheckoutScreen extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: AppTheme.primaryColor,
+                        fontSize: 16,
                       ),
                     ),
                   ],
                 ),
               );
             }).toList(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCustomerInfo(CheckoutController controller) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.person_outlined, color: AppTheme.primaryColor),
-                const SizedBox(width: 8),
-                const Text(
-                  'Delivery Information',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              onChanged: (value) => controller.customerName.value = value,
-              decoration: InputDecoration(
-                labelText: 'Full Name *',
-                hintText: 'Enter your full name',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                prefixIcon: const Icon(Icons.person),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              onChanged: (value) => controller.customerPhone.value = value,
-              keyboardType: TextInputType.phone,
-              decoration: InputDecoration(
-                labelText: 'Phone Number *',
-                hintText: 'Enter your phone number',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                prefixIcon: const Icon(Icons.phone),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              onChanged: (value) => controller.customerAddress.value = value,
-              maxLines: 3,
-              decoration: InputDecoration(
-                labelText: 'Delivery Address *',
-                hintText: 'Enter your complete delivery address',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                prefixIcon: const Icon(Icons.location_on),
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              onChanged: (value) => controller.specialNotes.value = value,
-              maxLines: 2,
-              decoration: InputDecoration(
-                labelText: 'Special Notes (Optional)',
-                hintText: 'Any special instructions for your order',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                prefixIcon: const Icon(Icons.note),
-              ),
-            ),
           ],
         ),
       ),
@@ -275,7 +255,7 @@ class CheckoutScreen extends StatelessWidget {
                 Icon(Icons.payment_outlined, color: AppTheme.primaryColor),
                 const SizedBox(width: 8),
                 const Text(
-                  'Payment Method',
+                  'Metode Pembayaran',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -284,44 +264,176 @@ class CheckoutScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            ...controller.paymentMethods.map((method) {
-              return Obx(() => Container(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    child: RadioListTile<String>(
-                      value: method['id'],
-                      groupValue: controller.selectedPaymentMethod.value,
-                      onChanged: (value) {
-                        if (value != null) {
-                          controller.selectedPaymentMethod.value = value;
-                        }
-                      },
-                      title: Row(
+            
+            // Bayar di Kasir
+            Obx(() => Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: controller.selectedPaymentMethod.value == 'Bayar di kasir'
+                      ? AppTheme.primaryColor
+                      : Colors.grey[300]!,
+                  width: 2,
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: RadioListTile<String>(
+                value: 'Bayar di kasir',
+                groupValue: controller.selectedPaymentMethod.value,
+                onChanged: (value) {
+                  if (value != null) {
+                    controller.selectedPaymentMethod.value = value;
+                  }
+                },
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                title: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.green[100],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.store,
+                        color: Colors.green[700],
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            method['icon'],
-                            style: const TextStyle(fontSize: 20),
+                            'Bayar di Kasir',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
-                          const SizedBox(width: 8),
                           Text(
-                            method['name'],
-                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            'Bayar langsung di kasir saat mengambil pesanan',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 12,
+                            ),
                           ),
                         ],
                       ),
-                      subtitle: Text(method['description']),
-                      activeColor: AppTheme.primaryColor,
-                      shape: RoundedRectangleBorder(
+                    ),
+                  ],
+                ),
+                activeColor: AppTheme.primaryColor,
+              ),
+            )),
+
+            // QRIS
+            Obx(() => Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: controller.selectedPaymentMethod.value == 'QRIS'
+                      ? AppTheme.primaryColor
+                      : Colors.grey[300]!,
+                  width: 2,
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: RadioListTile<String>(
+                value: 'QRIS',
+                groupValue: controller.selectedPaymentMethod.value,
+                onChanged: (value) {
+                  if (value != null) {
+                    controller.selectedPaymentMethod.value = value;
+                  }
+                },
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                title: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.red[100],
                         borderRadius: BorderRadius.circular(8),
-                        side: BorderSide(
-                          color: controller.selectedPaymentMethod.value ==
-                                  method['id']
-                              ? AppTheme.primaryColor
-                              : Colors.grey[300]!,
-                        ),
+                      ),
+                      child: Icon(
+                        Icons.qr_code,
+                        color: Colors.red[700],
+                        size: 24,
                       ),
                     ),
-                  ));
-            }).toList(),
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'QRIS',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            'Bayar menggunakan aplikasi e-wallet atau mobile banking',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                activeColor: AppTheme.primaryColor,
+              ),
+            )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNotesSection(CheckoutController controller) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.note_outlined, color: AppTheme.primaryColor),
+                const SizedBox(width: 8),
+                const Text(
+                  'Catatan Pesanan',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              onChanged: (value) => controller.orderNotes.value = value,
+              maxLines: 3,
+              decoration: InputDecoration(
+                hintText: 'Tambahkan catatan khusus untuk pesanan Anda (opsional)',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(color: AppTheme.primaryColor),
+                ),
+                contentPadding: const EdgeInsets.all(12),
+              ),
+            ),
           ],
         ),
       ),
@@ -342,7 +454,7 @@ class CheckoutScreen extends StatelessWidget {
                 Icon(Icons.receipt_outlined, color: AppTheme.primaryColor),
                 const SizedBox(width: 8),
                 const Text(
-                  'Price Breakdown',
+                  'Rincian Harga',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -351,13 +463,11 @@ class CheckoutScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            _buildPriceRow('Subtotal', controller.totalPrice),
-            _buildPriceRow('Delivery Fee', controller.deliveryFee),
-            _buildPriceRow('Tax (10%)', controller.tax),
-            const Divider(thickness: 1),
+            _buildPriceRow('Subtotal (${controller.totalItems.value} items)', controller.totalPrice.value),
+            const Divider(thickness: 1, height: 24),
             _buildPriceRow(
               'Total',
-              controller.grandTotal,
+              controller.totalPrice.value,
               isTotal: true,
             ),
           ],
@@ -382,7 +492,7 @@ class CheckoutScreen extends StatelessWidget {
           Text(
             '\$${amount.toStringAsFixed(2)}',
             style: TextStyle(
-              fontSize: isTotal ? 16 : 14,
+              fontSize: isTotal ? 18 : 14,
               fontWeight: FontWeight.bold,
               color: isTotal ? AppTheme.primaryColor : Colors.black,
             ),
@@ -395,9 +505,9 @@ class CheckoutScreen extends StatelessWidget {
   Widget _buildPlaceOrderButton(CheckoutController controller) {
     return Obx(() => SizedBox(
           width: double.infinity,
-          height: 50,
+          height: 56,
           child: ElevatedButton(
-            onPressed: controller.isProcessing.value
+            onPressed: controller.isProcessing.value || controller.selectedPaymentMethod.value.isEmpty
                 ? null
                 : () async {
                     await controller.processCheckout();
@@ -405,8 +515,9 @@ class CheckoutScreen extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.primaryColor,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
+                borderRadius: BorderRadius.circular(16),
               ),
+              elevation: 2,
             ),
             child: controller.isProcessing.value
                 ? const Row(
@@ -423,7 +534,7 @@ class CheckoutScreen extends StatelessWidget {
                       ),
                       SizedBox(width: 12),
                       Text(
-                        'Processing...',
+                        'Memproses Pesanan...',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -433,7 +544,7 @@ class CheckoutScreen extends StatelessWidget {
                     ],
                   )
                 : Text(
-                    'Place Order - \$${controller.grandTotal.toStringAsFixed(2)}',
+                    'Buat Pesanan - \$${controller.totalPrice.value.toStringAsFixed(2)}',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

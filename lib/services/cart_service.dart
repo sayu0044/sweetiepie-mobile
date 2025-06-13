@@ -64,7 +64,10 @@ class CartService extends GetxController {
       if (authToken != null && authModel != null) {
         pb.authStore.save(authToken, authModel);
         print('CartService: Auth synced from AuthService');
-        print('CartService: Token: ${authToken.substring(0, 20)}...');
+        final tokenPreview = authToken.length > 20 
+            ? '${authToken.substring(0, 20)}...' 
+            : authToken;
+        print('CartService: Token: $tokenPreview');
         print('CartService: User ID: ${authModel.id}');
       } else {
         print('CartService: No auth to sync');

@@ -50,7 +50,10 @@ class UserSettingsService extends GetxController {
       if (authToken != null && authModel != null) {
         pb.authStore.save(authToken, authModel);
         print('UserSettingsService: Auth synced from AuthService');
-        print('UserSettingsService: Token: ${authToken.substring(0, 20)}...');
+        final tokenPreview = authToken.length > 20 
+            ? '${authToken.substring(0, 20)}...' 
+            : authToken;
+        print('UserSettingsService: Token: $tokenPreview');
         print('UserSettingsService: User ID: ${authModel.id}');
       } else {
         print('UserSettingsService: No auth to sync');

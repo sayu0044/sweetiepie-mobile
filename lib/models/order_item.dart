@@ -2,8 +2,9 @@ class OrderItem {
   final String id;
   final String orderId;
   final String productsId;
-  final int jumlah;
-  final double harga;
+  final int quantity;
+  final double unitPrice;
+  final double subtotal;
   final DateTime created;
   final DateTime updated;
 
@@ -11,8 +12,9 @@ class OrderItem {
     required this.id,
     required this.orderId,
     required this.productsId,
-    required this.jumlah,
-    required this.harga,
+    required this.quantity,
+    required this.unitPrice,
+    required this.subtotal,
     required this.created,
     required this.updated,
   });
@@ -22,12 +24,11 @@ class OrderItem {
       id: json['id'] ?? '',
       orderId: json['order_id'] ?? '',
       productsId: json['products_id'] ?? '',
-      jumlah: json['jumlah'] ?? 0,
-      harga: (json['harga'] ?? 0.0).toDouble(),
-      created:
-          DateTime.parse(json['created'] ?? DateTime.now().toIso8601String()),
-      updated:
-          DateTime.parse(json['updated'] ?? DateTime.now().toIso8601String()),
+      quantity: json['quantity'] ?? 0,
+      unitPrice: (json['unit_price'] ?? 0).toDouble(),
+      subtotal: (json['subtotal'] ?? 0).toDouble(),
+      created: DateTime.parse(json['created'] ?? DateTime.now().toIso8601String()),
+      updated: DateTime.parse(json['updated'] ?? DateTime.now().toIso8601String()),
     );
   }
 
@@ -36,10 +37,21 @@ class OrderItem {
       'id': id,
       'order_id': orderId,
       'products_id': productsId,
-      'jumlah': jumlah,
-      'harga': harga,
+      'quantity': quantity,
+      'unit_price': unitPrice,
+      'subtotal': subtotal,
       'created': created.toIso8601String(),
       'updated': updated.toIso8601String(),
+    };
+  }
+
+  Map<String, dynamic> toCreateJson() {
+    return {
+      'order_id': orderId,
+      'products_id': productsId,
+      'quantity': quantity,
+      'unit_price': unitPrice,
+      'subtotal': subtotal,
     };
   }
 
@@ -47,8 +59,9 @@ class OrderItem {
     String? id,
     String? orderId,
     String? productsId,
-    int? jumlah,
-    double? harga,
+    int? quantity,
+    double? unitPrice,
+    double? subtotal,
     DateTime? created,
     DateTime? updated,
   }) {
@@ -56,10 +69,16 @@ class OrderItem {
       id: id ?? this.id,
       orderId: orderId ?? this.orderId,
       productsId: productsId ?? this.productsId,
-      jumlah: jumlah ?? this.jumlah,
-      harga: harga ?? this.harga,
+      quantity: quantity ?? this.quantity,
+      unitPrice: unitPrice ?? this.unitPrice,
+      subtotal: subtotal ?? this.subtotal,
       created: created ?? this.created,
       updated: updated ?? this.updated,
     );
+  }
+
+  @override
+  String toString() {
+    return 'OrderItem(id: $id, orderId: $orderId, productsId: $productsId, quantity: $quantity, unitPrice: $unitPrice, subtotal: $subtotal)';
   }
 }

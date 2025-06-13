@@ -86,11 +86,13 @@ class OrderService extends GetxController {
       for (final cartItem in cartItems) {
         final product = _databaseService.getProductById(cartItem.productsId);
         if (product != null) {
+          final subtotal = cartItem.jumlahBarang * product.price;
           orderItemsData.add({
             'order_id': orderId,
             'products_id': cartItem.productsId,
-            'jumlah': cartItem.jumlahBarang,
-            'harga': product.price,
+            'quantity': cartItem.jumlahBarang,
+            'unit_price': product.price,
+            'subtotal': subtotal,
           });
         }
       }
@@ -194,7 +196,7 @@ class OrderService extends GetxController {
       return {
         'order_item': orderItem,
         'product': product,
-        'subtotal': orderItem.harga * orderItem.jumlah,
+        'subtotal': orderItem.subtotal,
       };
     }).toList();
   }

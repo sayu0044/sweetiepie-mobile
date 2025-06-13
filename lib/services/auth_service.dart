@@ -23,8 +23,11 @@ class AuthService extends GetxController {
     try {
       print('AuthService: Checking existing auth...');
       print('AuthService: Token valid: ${pb.authStore.isValid}');
-      print(
-          'AuthService: Token: ${pb.authStore.token?.substring(0, 20) ?? 'null'}...');
+      final token = pb.authStore.token;
+      final tokenPreview = token != null && token.length > 20 
+          ? '${token.substring(0, 20)}...' 
+          : token ?? 'null';
+      print('AuthService: Token: $tokenPreview');
 
       if (pb.authStore.isValid && pb.authStore.model != null) {
         print('AuthService: Found valid existing auth');
@@ -52,7 +55,11 @@ class AuthService extends GetxController {
 
       print('AuthService: Login successful');
       print('AuthService: User ID: ${authData.record?.id}');
-      print('AuthService: Token: ${pb.authStore.token?.substring(0, 20)}...');
+      final loginToken = pb.authStore.token;
+      final loginTokenPreview = loginToken != null && loginToken.length > 20 
+          ? '${loginToken.substring(0, 20)}...' 
+          : loginToken ?? 'null';
+      print('AuthService: Token: $loginTokenPreview');
 
       currentUser.value = authData.record;
 

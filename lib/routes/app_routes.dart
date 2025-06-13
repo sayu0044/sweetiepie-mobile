@@ -8,6 +8,7 @@ abstract class Routes {
   static const CART = '/cart';
   static const FAVORITE = '/favorite';
   static const CHECKOUT = '/checkout';
+  static const ORDER_PAYMENT = '/order-payment';
   static const ORDER_SUCCESS = '/order-success';
   static const ACCOUNT = '/account';
   static const SETTINGS = '/settings';
