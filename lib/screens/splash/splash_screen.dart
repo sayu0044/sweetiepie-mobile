@@ -25,26 +25,29 @@ class _SplashScreenState extends State<SplashScreen> {
     try {
       final AuthService authService = Get.find<AuthService>();
 
-      print('SplashScreen: Checking auth status...');
-      print('SplashScreen: Is authenticated: ${authService.isAuthenticated}');
-      print('SplashScreen: Current user: ${authService.currentUser.value?.id}');
-      print(
+      debugPrint('SplashScreen: Checking auth status...');
+      debugPrint(
+          'SplashScreen: Is authenticated: ${authService.isAuthenticated}');
+      debugPrint(
+          'SplashScreen: Current user: ${authService.currentUser.value?.id}');
+      debugPrint(
           'SplashScreen: Current user email: ${authService.currentUser.value?.data['email']}');
 
       // Check if user is already authenticated
       if (authService.isAuthenticated) {
-        print('SplashScreen: User is authenticated, navigating to HOME');
+        debugPrint('SplashScreen: User is authenticated, navigating to HOME');
         // Navigate to home if authenticated
-        Get.offAllNamed(Routes.HOME);
+        Get.offAllNamed(Routes.home);
       } else {
-        print('SplashScreen: User is not authenticated, navigating to LOGIN');
+        debugPrint(
+            'SplashScreen: User is not authenticated, navigating to LOGIN');
         // Navigate to login if not authenticated
-        Get.offAllNamed(Routes.LOGIN);
+        Get.offAllNamed(Routes.login);
       }
     } catch (e) {
       // If there's an error, go to login
-      print('SplashScreen: Error checking auth status: $e');
-      Get.offAllNamed(Routes.LOGIN);
+      debugPrint('SplashScreen: Error checking auth status: $e');
+      Get.offAllNamed(Routes.login);
     }
   }
 
@@ -65,7 +68,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 borderRadius: BorderRadius.circular(60),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 5),
                   ),

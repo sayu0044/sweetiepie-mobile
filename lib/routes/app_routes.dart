@@ -1,18 +1,18 @@
 part of 'app_pages.dart';
 
 abstract class Routes {
-  static const SPLASH = '/splash';
-  static const LOGIN = '/login';
-  static const REGISTER = '/register';
-  static const HOME = '/home';
-  static const CART = '/cart';
-  static const FAVORITE = '/favorite';
-  static const CHECKOUT = '/checkout';
-  static const ORDER_PAYMENT = '/order-payment';
-  static const ORDER_SUCCESS = '/order-success';
-  static const ACCOUNT = '/account';
-  static const SETTINGS = '/settings';
-  static const EDIT_PROFILE = '/edit-profile';
-  static const DEBUG = '/debug';
-  static const DEBUG_AUTH = '/debug-auth';
+  static const splash = '/splash';
+  static const login = '/login';
+  static const register = '/register';
+  static const home = '/home';
+  static const cart = '/cart';
+  static const favorite = '/favorite';
+  static const checkout = '/checkout';
+  static const orderPayment = '/order-payment';
+  static const orderSuccess = '/order-success';
+  static const account = '/account';
+  static const settings = '/settings';
+  static const editProfile = '/edit-profile';
+  static const debug = '/debug';
+  static const debugAuth = '/debug-auth';
 }

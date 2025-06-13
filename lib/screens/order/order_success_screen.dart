@@ -25,10 +25,10 @@ class OrderSuccessScreen extends StatelessWidget {
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
+                  color: Colors.green.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.green.withOpacity(0.3),
+                    color: Colors.green.withValues(alpha: 0.3),
                     width: 2,
                   ),
                 ),
@@ -112,7 +112,9 @@ class OrderSuccessScreen extends StatelessWidget {
                             Row(
                               children: [
                                 Icon(
-                                  paymentMethod == 'QRIS' ? Icons.qr_code : Icons.store,
+                                  paymentMethod == 'QRIS'
+                                      ? Icons.qr_code
+                                      : Icons.store,
                                   color: AppTheme.primaryColor,
                                   size: 20,
                                 ),
@@ -137,10 +139,11 @@ class OrderSuccessScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: AppTheme.primaryColor.withOpacity(0.1),
+                            color: AppTheme.primaryColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: AppTheme.primaryColor.withOpacity(0.3),
+                              color:
+                                  AppTheme.primaryColor.withValues(alpha: 0.3),
                               width: 1,
                             ),
                           ),
@@ -216,7 +219,8 @@ class OrderSuccessScreen extends StatelessWidget {
                         );
                       },
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: AppTheme.primaryColor, width: 2),
+                        side:
+                            BorderSide(color: AppTheme.primaryColor, width: 2),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),

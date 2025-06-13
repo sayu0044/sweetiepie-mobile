@@ -8,11 +8,11 @@ class CartIconWidget extends StatelessWidget {
   final double? iconSize;
 
   const CartIconWidget({
-    Key? key,
+    super.key,
     this.onTap,
     this.iconColor,
     this.iconSize = 24.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -7,6 +7,7 @@ import 'package:sweetipie/models/product.dart';
 import 'package:sweetipie/services/auth_service.dart';
 import 'package:sweetipie/utils/debug_orders.dart';
 import 'package:sweetipie/utils/notification_utils.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:pocketbase/pocketbase.dart';
 
@@ -14,12 +15,13 @@ class CheckoutController extends GetxController {
   final AuthService _authService = Get.find<AuthService>();
 
   final CartController _cartController = Get.find<CartController>();
-  
+
   // PocketBase instance
   final PocketBase pb = PocketBase('http://127.0.0.1:8090');
 
   // Observable variables
-  final RxList<Map<String, dynamic>> cartItemsWithProducts = <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> cartItemsWithProducts =
+      <Map<String, dynamic>>[].obs;
   final RxString selectedPaymentMethod = ''.obs;
   final RxString orderNotes = ''.obs;
   final RxBool isProcessing = false.obs;
@@ -29,11 +31,11 @@ class CheckoutController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    print('CheckoutController: Initializing...');
-    
+    debugPrint('CheckoutController: Initializing...');
+
     // Sync auth from AuthService
     _syncAuthFromAuthService();
-    
+
     // Load selected cart items for checkout
     _loadCartItemsForCheckout();
   }
@@ -42,37 +44,38 @@ class CheckoutController extends GetxController {
   void _syncAuthFromAuthService() {
     try {
       final authToken = _authService.pb.authStore.token;
-      final authModel = _authService.pb.authStore.model;
+      final authModel = _authService.pb.authStore.record;
 
-      if (authToken != null && authModel != null) {
+      if (authToken.isNotEmpty) {
         pb.authStore.save(authToken, authModel);
-        print('CheckoutController: Auth synced from AuthService');
+        debugPrint('CheckoutController: Auth synced from AuthService');
       } else {
-        print('CheckoutController: No auth to sync');
+        debugPrint('CheckoutController: No auth to sync');
       }
     } catch (e) {
-      print('CheckoutController: Error syncing auth: $e');
+      debugPrint('CheckoutController: Error syncing auth: $e');
     }
   }
 
   // Load selected cart items for checkout
   void _loadCartItemsForCheckout() {
     try {
-      print('CheckoutController: Loading cart items for checkout...');
-      
+      debugPrint('CheckoutController: Loading cart items for checkout...');
+
       // Get selected cart items from CartController
       final selectedItems = _cartController.cartItemsWithProducts
           .where((item) => _cartController.isItemSelected(item['cart'].id))
           .toList();
 
       cartItemsWithProducts.value = selectedItems;
-      
+
       // Calculate totals
       _calculateTotals();
-      
-      print('CheckoutController: Loaded ${cartItemsWithProducts.length} items for checkout');
+
+      debugPrint(
+          'CheckoutController: Loaded ${cartItemsWithProducts.length} items for checkout');
     } catch (e) {
-      print('CheckoutController: Error loading cart items: $e');
+      debugPrint('CheckoutController: Error loading cart items: $e');
     }
   }
 
@@ -84,7 +87,7 @@ class CheckoutController extends GetxController {
     for (var item in cartItemsWithProducts) {
       final cart = item['cart'] as Cart;
       final product = item['product'] as Product?;
-      
+
       if (product != null) {
         total += cart.jumlahBarang * product.price;
         items += cart.jumlahBarang;
@@ -109,19 +112,19 @@ class CheckoutController extends GetxController {
 
     try {
       isProcessing.value = true;
-      print('CheckoutController: Processing checkout...');
+      debugPrint('CheckoutController: Processing checkout...');
 
       // 1. Create order
       final order = await _createOrder();
-      print('CheckoutController: Order created with ID: ${order.id}');
+      debugPrint('CheckoutController: Order created with ID: ${order.id}');
 
       // 2. Create order items
       await _createOrderItems(order.id);
-      print('CheckoutController: Order items created');
+      debugPrint('CheckoutController: Order items created');
 
       // 3. Remove selected items from cart
       await _removeSelectedItemsFromCart();
-      print('CheckoutController: Selected items removed from cart');
+      debugPrint('CheckoutController: Selected items removed from cart');
 
       // 4. Show success message
       NotificationUtils.showOrderSuccess(order.id);
@@ -130,17 +133,16 @@ class CheckoutController extends GetxController {
       Get.offAllNamed('/order-payment', arguments: {
         'orderId': order.id,
       });
-
     } catch (e) {
-      print('CheckoutController: Error processing checkout: $e');
-      
+      debugPrint('CheckoutController: Error processing checkout: $e');
+
       // Run debug tests when checkout fails
-      print('🔍 Running debug tests to identify the issue...');
+      debugPrint('🔍 Running debug tests to identify the issue...');
       await DebugOrdersUtil.testOrdersCollection();
       await DebugOrdersUtil.suggestAccessRules();
-      
+
       // Check if it's a collections issue
-      if (e.toString().contains('Failed to create record') || 
+      if (e.toString().contains('Failed to create record') ||
           e.toString().contains('status: 400') ||
           e.toString().contains('collection')) {
         NotificationUtils.showError(
@@ -148,7 +150,8 @@ class CheckoutController extends GetxController {
           title: 'Database Error',
         );
       } else {
-        NotificationUtils.showError('Gagal memproses pesanan. Silakan coba lagi.');
+        NotificationUtils.showError(
+            'Gagal memproses pesanan. Silakan coba lagi.');
       }
     } finally {
       isProcessing.value = false;
@@ -176,15 +179,16 @@ class CheckoutController extends GetxController {
       orderData['catatan'] = orderNotes.value;
     }
 
-    print('CheckoutController: Creating order with data: $orderData');
+    debugPrint('CheckoutController: Creating order with data: $orderData');
 
     try {
       final record = await pb.collection('orders').create(body: orderData);
-      print('CheckoutController: Order record created successfully: ${record.data}');
+      debugPrint(
+          'CheckoutController: Order record created successfully: ${record.data}');
       return Order.fromJson(record.data);
     } catch (e) {
-      print('CheckoutController: Detailed error creating order: $e');
-      
+      debugPrint('CheckoutController: Detailed error creating order: $e');
+
       // Try with minimal data first to isolate the issue
       final minimalData = <String, dynamic>{
         'users_id': userId,
@@ -193,8 +197,9 @@ class CheckoutController extends GetxController {
         'total_price': totalPrice.value.toDouble(),
         'order_date': DateTime.now().toIso8601String().split('T')[0],
       };
-      
-      print('CheckoutController: Retrying with minimal data: $minimalData');
+
+      debugPrint(
+          'CheckoutController: Retrying with minimal data: $minimalData');
       final record = await pb.collection('orders').create(body: minimalData);
       return Order.fromJson(record.data);
     }
@@ -205,10 +210,10 @@ class CheckoutController extends GetxController {
     for (var item in cartItemsWithProducts) {
       final cart = item['cart'] as Cart;
       final product = item['product'] as Product?;
-      
+
       if (product != null) {
         final subtotal = cart.jumlahBarang * product.price;
-        
+
         final orderItemData = <String, dynamic>{
           'order_id': orderId,
           'products_id': cart.productsId,
@@ -217,14 +222,14 @@ class CheckoutController extends GetxController {
           'subtotal': subtotal.toDouble(), // Ensure it's a double
         };
 
-        print('CheckoutController: Creating order item: $orderItemData');
+        debugPrint('CheckoutController: Creating order item: $orderItemData');
 
         try {
           await pb.collection('order_items').create(body: orderItemData);
-          print('CheckoutController: Order item created successfully');
+          debugPrint('CheckoutController: Order item created successfully');
         } catch (e) {
-          print('CheckoutController: Error creating order item: $e');
-          throw e; // Re-throw to handle in parent function
+          debugPrint('CheckoutController: Error creating order item: $e');
+          rethrow; // Re-throw to handle in parent function
         }
       }
     }
@@ -232,15 +237,14 @@ class CheckoutController extends GetxController {
 
   // Remove selected items from cart
   Future<void> _removeSelectedItemsFromCart() async {
-    final selectedCartIds = cartItemsWithProducts
-        .map((item) => (item['cart'] as Cart).id)
-        .toList();
+    final selectedCartIds =
+        cartItemsWithProducts.map((item) => (item['cart'] as Cart).id).toList();
 
     for (String cartId in selectedCartIds) {
       try {
         await _cartController.removeFromCart(cartId);
       } catch (e) {
-        print('CheckoutController: Error removing cart item $cartId: $e');
+        debugPrint('CheckoutController: Error removing cart item $cartId: $e');
       }
     }
 
@@ -256,7 +260,7 @@ class CheckoutController extends GetxController {
 
   @override
   void onClose() {
-    print('CheckoutController: Disposed');
+    debugPrint('CheckoutController: Disposed');
     super.onClose();
   }
 }

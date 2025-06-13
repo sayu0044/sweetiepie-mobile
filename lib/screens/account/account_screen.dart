@@ -12,7 +12,7 @@ class AccountScreen extends StatelessWidget {
   String? _getAvatarUrl(dynamic user) {
     if (user?.data['avatar'] != null && user.data['avatar'].isNotEmpty) {
       final authService = Get.find<AuthService>();
-      return '${authService.pb.baseUrl}/api/files/${user.collectionId}/${user.id}/${user.data['avatar']}';
+      return '${authService.pb.baseURL}/api/files/${user.collectionId}/${user.id}/${user.data['avatar']}';
     }
     return null;
   }
@@ -59,7 +59,7 @@ class AccountScreen extends StatelessWidget {
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
                                 return Image.asset(
-                                  HomeController.GUEST_AVATAR,
+                                  HomeController.guestAvatar,
                                   width: 100,
                                   height: 100,
                                   fit: BoxFit.cover,
@@ -71,7 +71,7 @@ class AccountScreen extends StatelessWidget {
                             width: 100,
                             height: 100,
                             child: Image.asset(
-                              HomeController.GUEST_AVATAR,
+                              HomeController.guestAvatar,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -135,7 +135,7 @@ class AccountScreen extends StatelessWidget {
               title: 'Logout',
               onTap: () {
                 authService.logout();
-                Get.offAllNamed(Routes.LOGIN);
+                Get.offAllNamed(Routes.login);
               },
               isDestructive: true,
             ),

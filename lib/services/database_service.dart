@@ -1,19 +1,20 @@
 import 'package:pocketbase/pocketbase.dart';
 import 'package:get/get.dart';
-import 'package:sweetipie/models/category.dart';
+import 'package:sweetipie/models/category.dart' as local;
 import 'package:sweetipie/models/product.dart';
+import 'package:flutter/foundation.dart';
 
 class DatabaseService extends GetxController {
   final PocketBase pb = PocketBase('http://127.0.0.1:8090');
 
-  final RxList<Category> categories = <Category>[].obs;
+  final RxList<local.Category> categories = <local.Category>[].obs;
   final RxList<Product> products = <Product>[].obs;
   final RxBool isLoading = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    print('DatabaseService initialized');
+    debugPrint('DatabaseService initialized');
     // Load static data first to ensure app works
     _loadStaticCategories();
     _loadStaticProducts();
@@ -24,61 +25,61 @@ class DatabaseService extends GetxController {
 
   void _loadStaticCategories() {
     categories.addAll([
-      Category(id: 'cake', name: 'Cake', icon: '🎂'),
-      Category(id: 'donut', name: 'Donut', icon: '🍩'),
-      Category(id: 'cookies', name: 'Cookies', icon: '🍪'),
+      local.Category(id: 'cake', name: 'Cake', icon: '🎂'),
+      local.Category(id: 'donut', name: 'Donut', icon: '🍩'),
+      local.Category(id: 'cookies', name: 'Cookies', icon: '🍪'),
     ]);
-    print('Loaded ${categories.length} static categories');
+    debugPrint('Loaded ${categories.length} static categories');
   }
 
   Future<void> _tryFetchFromDatabase() async {
     try {
-      print('Attempting to fetch data from database...');
+      debugPrint('Attempting to fetch data from database...');
       await Future.wait([
         fetchCategories(),
         fetchProducts(),
       ]);
     } catch (e) {
-      print('Database fetch failed, using static data: $e');
+      debugPrint('Database fetch failed, using static data: $e');
     }
   }
 
   Future<void> fetchCategories() async {
     try {
       isLoading.value = true;
-      print('Fetching categories from database...');
+      debugPrint('Fetching categories from database...');
       final records = await pb.collection('category').getFullList();
 
       categories.clear();
       for (final record in records) {
-        categories.add(Category(
+        categories.add(local.Category(
           id: record.data['kategori']?.toString().toLowerCase() ?? '',
           name: record.data['kategori'] ?? '',
           icon: _getCategoryIcon(record.data['kategori'] ?? ''),
         ));
       }
 
-      print('Fetched ${categories.length} categories from database');
+      debugPrint('Fetched ${categories.length} categories from database');
       for (var cat in categories) {
-        print('Category: ${cat.id} - ${cat.name}');
+        debugPrint('Category: ${cat.id} - ${cat.name}');
       }
 
       // If no categories from database, add static ones
       if (categories.isEmpty) {
-        print('No categories from database, using static categories');
+        debugPrint('No categories from database, using static categories');
         categories.addAll([
-          Category(id: 'cake', name: 'Cake', icon: '🎂'),
-          Category(id: 'donut', name: 'Donut', icon: '🍩'),
-          Category(id: 'cookies', name: 'Cookies', icon: '🍪'),
+          local.Category(id: 'cake', name: 'Cake', icon: '🎂'),
+          local.Category(id: 'donut', name: 'Donut', icon: '🍩'),
+          local.Category(id: 'cookies', name: 'Cookies', icon: '🍪'),
         ]);
       }
     } catch (e) {
-      print('Error fetching categories: $e');
+      debugPrint('Error fetching categories: $e');
       // Fallback to static data if database fails
       categories.addAll([
-        Category(id: 'cake', name: 'Cake', icon: '🎂'),
-        Category(id: 'donut', name: 'Donut', icon: '🍩'),
-        Category(id: 'cookies', name: 'Cookies', icon: '🍪'),
+        local.Category(id: 'cake', name: 'Cake', icon: '🎂'),
+        local.Category(id: 'donut', name: 'Donut', icon: '🍩'),
+        local.Category(id: 'cookies', name: 'Cookies', icon: '🍪'),
       ]);
     } finally {
       isLoading.value = false;
@@ -88,7 +89,7 @@ class DatabaseService extends GetxController {
   Future<void> fetchProducts() async {
     try {
       isLoading.value = true;
-      print('Fetching products from database...');
+      debugPrint('Fetching products from database...');
 
       // Simple fetch without expansion first
       final records = await pb.collection('products').getFullList();
@@ -96,10 +97,10 @@ class DatabaseService extends GetxController {
       products.clear();
 
       if (records.isEmpty) {
-        print('No products in database, using static products');
+        debugPrint('No products in database, using static products');
         _loadStaticProducts();
       } else {
-        print('Found ${records.length} products in database');
+        debugPrint('Found ${records.length} products in database');
 
         for (final record in records) {
           // Map the correct field names from database
@@ -117,7 +118,7 @@ class DatabaseService extends GetxController {
               record.data['gambar'].toString().isNotEmpty) {
             final imageName = record.data['gambar'].toString();
             productImage =
-                '${pb.baseUrl}/api/files/${record.collectionId}/${record.id}/$imageName';
+                '${pb.baseURL}/api/files/${record.collectionId}/${record.id}/$imageName';
           }
 
           // Map category ID to category name
@@ -134,13 +135,13 @@ class DatabaseService extends GetxController {
               categoryName = 'cake';
               break;
             default:
-              print(
+              debugPrint(
                   'Unknown category ID: $categoryId for product: $productName');
               categoryName = 'unknown';
               break;
           }
 
-          print(
+          debugPrint(
               'Product: $productName, Price: $productPrice, Category: $categoryName');
 
           products.add(Product(
@@ -156,20 +157,21 @@ class DatabaseService extends GetxController {
 
         // If no products were loaded properly, use static data
         if (products.isEmpty) {
-          print('Failed to load products from database, using static products');
+          debugPrint(
+              'Failed to load products from database, using static products');
           _loadStaticProducts();
         }
       }
 
-      print('Total products loaded: ${products.length}');
+      debugPrint('Total products loaded: ${products.length}');
       for (var product in products) {
-        print(
+        debugPrint(
             'Final Product: ${product.name} - Category: ${product.categoryId} - Price: \$${product.price}');
       }
     } catch (e) {
-      print('Error fetching products: $e');
+      debugPrint('Error fetching products: $e');
       // Fallback to static data if database fails
-      print('Using static products as fallback');
+      debugPrint('Using static products as fallback');
       _loadStaticProducts();
     } finally {
       isLoading.value = false;
@@ -190,7 +192,7 @@ class DatabaseService extends GetxController {
   }
 
   void _loadStaticProducts() {
-    print('Loading static products...');
+    debugPrint('Loading static products...');
     products.addAll([
       // Cakes
       Product(
@@ -292,7 +294,7 @@ class DatabaseService extends GetxController {
         description: 'White chocolate cookie with macadamia nuts',
       ),
     ]);
-    print('Loaded ${products.length} static products');
+    debugPrint('Loaded ${products.length} static products');
   }
 
   List<Product> getProductsByCategory(String categoryId) {

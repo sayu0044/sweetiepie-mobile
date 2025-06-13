@@ -19,36 +19,36 @@ import 'package:sweetipie/screens/debug/debug_auth_screen.dart';
 part 'app_routes.dart';
 
 class AppPages {
-  static const INITIAL = Routes.SPLASH;
+  static const initial = Routes.splash;
 
   static final routes = [
     GetPage(
-      name: Routes.SPLASH,
+      name: Routes.splash,
       page: () => const SplashScreen(),
     ),
     GetPage(
-      name: Routes.LOGIN,
+      name: Routes.login,
       page: () => const LoginScreen(),
       binding: AuthBinding(),
     ),
     GetPage(
-      name: Routes.REGISTER,
+      name: Routes.register,
       page: () => const RegisterScreen(),
     ),
     GetPage(
-      name: Routes.HOME,
+      name: Routes.home,
       page: () => const HomeScreen(),
       binding: HomeBinding(),
     ),
-    GetPage(name: Routes.FAVORITE, page: () => const FavoriteScreen()),
-    GetPage(name: Routes.CART, page: () => const CartScreen()),
-    GetPage(name: Routes.CHECKOUT, page: () => const CheckoutScreen()),
-    GetPage(name: Routes.ORDER_PAYMENT, page: () => const OrderPaymentScreen()),
-    GetPage(name: Routes.ORDER_SUCCESS, page: () => const OrderSuccessScreen()),
-    GetPage(name: Routes.ACCOUNT, page: () => const AccountScreen()),
-    GetPage(name: Routes.SETTINGS, page: () => const SettingsScreen()),
-    GetPage(name: Routes.EDIT_PROFILE, page: () => const EditProfileScreen()),
-    GetPage(name: Routes.DEBUG, page: () => const DebugScreen()),
-    GetPage(name: Routes.DEBUG_AUTH, page: () => const DebugAuthScreen()),
+    GetPage(name: Routes.favorite, page: () => const FavoriteScreen()),
+    GetPage(name: Routes.cart, page: () => const CartScreen()),
+    GetPage(name: Routes.checkout, page: () => const CheckoutScreen()),
+    GetPage(name: Routes.orderPayment, page: () => const OrderPaymentScreen()),
+    GetPage(name: Routes.orderSuccess, page: () => const OrderSuccessScreen()),
+    GetPage(name: Routes.account, page: () => const AccountScreen()),
+    GetPage(name: Routes.settings, page: () => const SettingsScreen()),
+    GetPage(name: Routes.editProfile, page: () => const EditProfileScreen()),
+    GetPage(name: Routes.debug, page: () => const DebugScreen()),
+    GetPage(name: Routes.debugAuth, page: () => const DebugAuthScreen()),
   ];
 }

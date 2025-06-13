@@ -4,7 +4,6 @@ import 'package:sweetipie/controllers/cart_controller.dart';
 import 'package:sweetipie/controllers/home_controller.dart';
 import 'package:sweetipie/models/category.dart';
 import 'package:sweetipie/models/product.dart';
-import 'package:sweetipie/routes/app_pages.dart';
 import 'package:sweetipie/theme/app_theme.dart';
 import 'package:sweetipie/widgets/bottom_nav_bar.dart';
 import 'package:sweetipie/widgets/like_button_widget.dart';
@@ -152,13 +151,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Also listen to products changes
     ever(databaseService.products, (products) {
-      print('Products updated: ${products.length}');
+      debugPrint('Products updated: ${products.length}');
     });
   }
 
   List<Category> get currentCategories {
     return databaseService.categories.isNotEmpty
-        ? databaseService.categories
+        ? databaseService.categories.toList()
         : staticCategories;
   }
 
@@ -202,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) {
                                       return Image.asset(
-                                        HomeController.GUEST_AVATAR,
+                                        HomeController.guestAvatar,
                                         width: 48,
                                         height: 48,
                                         fit: BoxFit.cover,
@@ -253,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -447,7 +446,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
+                              color: Colors.black.withValues(alpha: 0.05),
                               blurRadius: 8,
                               offset: const Offset(0, 4),
                             ),
@@ -492,8 +491,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         shape: BoxShape.circle,
                                         boxShadow: [
                                           BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(0.1),
+                                            color: Colors.black
+                                                .withValues(alpha: 0.1),
                                             blurRadius: 4,
                                             offset: const Offset(0, 2),
                                           ),
@@ -510,10 +509,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     bottom: 8,
                                     child: GestureDetector(
                                       onTap: () async {
-                                        print(
+                                        debugPrint(
                                             'HomeScreen: Adding product to cart: ${product.id} - ${product.name}');
-                                        await cartController
-                                            .addToCart(product, quantity: 1);
+                                        await cartController.addToCart(product,
+                                            quantity: 1);
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.all(8),

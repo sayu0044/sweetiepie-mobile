@@ -417,7 +417,7 @@ class SettingsScreen extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               authService.logout();
-              Get.offAllNamed(Routes.LOGIN);
+              Get.offAllNamed(Routes.login);
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
             child: const Text('Logout', style: TextStyle(color: Colors.white)),

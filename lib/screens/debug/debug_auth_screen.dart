@@ -84,12 +84,12 @@ class DebugAuthScreen extends StatelessWidget {
                 children: [
                   _buildInfoRow(
                     'PocketBase URL',
-                    authService.pb.baseUrl,
+                    authService.pb.baseURL,
                     Colors.blue,
                   ),
                   ElevatedButton(
                     onPressed: () async {
-                      print('🔍 Starting database check...');
+                      debugPrint('🔍 Starting database check...');
                       final results =
                           await DatabaseChecker.checkDatabaseSetup();
                       DatabaseChecker.showResults(results);
@@ -110,7 +110,7 @@ class DebugAuthScreen extends StatelessWidget {
                   const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () async {
-                      print('🔒 Starting API rules check...');
+                      debugPrint('🔒 Starting API rules check...');
 
                       // First authenticate using current auth service
                       final authService = Get.find<AuthService>();
@@ -123,7 +123,7 @@ class DebugAuthScreen extends StatelessWidget {
                       }
 
                       final results = await ApiRulesChecker.checkApiRules();
-                      ApiRulesChecker.printResults(results);
+                      ApiRulesChecker.debugPrintResults(results);
 
                       final recommendation =
                           ApiRulesChecker.getRecommendation(results);
@@ -187,7 +187,7 @@ class DebugAuthScreen extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () async {
                         try {
-                          print('Testing cart add...');
+                          debugPrint('Testing cart add...');
                           final success =
                               await cartService.addToCart('test_product', 1);
                           Get.snackbar(
@@ -221,7 +221,7 @@ class DebugAuthScreen extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () async {
                         try {
-                          print('Testing like toggle...');
+                          debugPrint('Testing like toggle...');
                           final success =
                               await likeService.toggleLike('test_product');
                           Get.snackbar(
@@ -251,12 +251,12 @@ class DebugAuthScreen extends StatelessWidget {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () async {
-                        print('🔍 Starting comprehensive API debug...');
+                        debugPrint('🔍 Starting comprehensive API debug...');
 
                         await ApiDebugHelper.debugCartIssue();
                         await ApiDebugHelper.debugLikeIssue();
                         await ApiDebugHelper.testAllAPIRules();
-                        ApiDebugHelper.printFixInstructions();
+                        ApiDebugHelper.debugPrintFixInstructions();
 
                         Get.snackbar(
                           'Debug Complete',
@@ -279,7 +279,7 @@ class DebugAuthScreen extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () async {
                         try {
-                          print('Testing profile update...');
+                          debugPrint('Testing profile update...');
                           final success = await settingsService.updateProfile(
                             name: 'Test User ${DateTime.now().millisecond}',
                             phone: '081234567890',

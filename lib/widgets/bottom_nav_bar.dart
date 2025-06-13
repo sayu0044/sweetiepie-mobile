@@ -43,21 +43,21 @@ class BottomNavBar extends StatelessWidget {
       onTap: (index) {
         switch (index) {
           case 0:
-            Get.offAllNamed(Routes.HOME);
+            Get.offAllNamed(Routes.home);
             break;
           case 1:
-            if (Get.currentRoute != Routes.CART) {
-              Get.toNamed(Routes.CART);
+            if (Get.currentRoute != Routes.cart) {
+              Get.toNamed(Routes.cart);
             }
             break;
           case 2:
-            if (Get.currentRoute != Routes.FAVORITE) {
-              Get.toNamed(Routes.FAVORITE);
+            if (Get.currentRoute != Routes.favorite) {
+              Get.toNamed(Routes.favorite);
             }
             break;
           case 3:
-            if (Get.currentRoute != Routes.ACCOUNT) {
-              Get.toNamed(Routes.ACCOUNT);
+            if (Get.currentRoute != Routes.account) {
+              Get.toNamed(Routes.account);
             }
             break;
         }

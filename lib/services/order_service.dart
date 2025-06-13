@@ -5,6 +5,7 @@ import 'package:sweetipie/models/order_item.dart';
 import 'package:sweetipie/services/auth_service.dart';
 import 'package:sweetipie/services/database_service.dart';
 import 'package:sweetipie/services/cart_service.dart';
+import 'package:flutter/foundation.dart';
 
 class OrderService extends GetxController {
   final AuthService _authService = Get.find<AuthService>();
@@ -24,7 +25,7 @@ class OrderService extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    print('OrderService: Initialized');
+    debugPrint('OrderService: Initialized');
 
     // Listen to auth changes
     _authService.currentUser.listen((user) {
@@ -62,7 +63,7 @@ class OrderService extends GetxController {
         }
       }
 
-      print(
+      debugPrint(
           'OrderService: Creating order with total: \$${totalPrice.toStringAsFixed(2)}');
 
       // Create order data
@@ -72,14 +73,14 @@ class OrderService extends GetxController {
         'total_price': totalPrice,
       };
 
-      print('OrderService: Creating order with data: $orderData');
+      debugPrint('OrderService: Creating order with data: $orderData');
 
       // Create order in PocketBase
       final orderRecord = await pb.collection('orders').create(body: orderData);
       final orderId = orderRecord.id;
       currentOrderId.value = orderId;
 
-      print('OrderService: Created order with ID: $orderId');
+      debugPrint('OrderService: Created order with ID: $orderId');
 
       // Create order items
       List<Map<String, dynamic>> orderItemsData = [];
@@ -102,7 +103,7 @@ class OrderService extends GetxController {
         await pb.collection('order_items').create(body: itemData);
       }
 
-      print('OrderService: Created ${orderItemsData.length} order items');
+      debugPrint('OrderService: Created ${orderItemsData.length} order items');
 
       // Clear cart after successful order
       await _cartService.clearCart();
@@ -113,7 +114,7 @@ class OrderService extends GetxController {
       Get.snackbar('Success', 'Order created successfully!');
       return true;
     } catch (e) {
-      print('OrderService Error creating order: $e');
+      debugPrint('OrderService Error creating order: $e');
       Get.snackbar('Error', 'Failed to create order: ${e.toString()}');
       return false;
     } finally {
@@ -137,10 +138,10 @@ class OrderService extends GetxController {
         return Order.fromJson(record.toJson());
       }).toList();
 
-      print(
+      debugPrint(
           'OrderService: Loaded ${orders.length} orders for user $currentUserId');
     } catch (e) {
-      print('OrderService Error loading orders: $e');
+      debugPrint('OrderService Error loading orders: $e');
     } finally {
       isLoading.value = false;
     }
@@ -157,7 +158,7 @@ class OrderService extends GetxController {
         return OrderItem.fromJson(record.toJson());
       }).toList();
     } catch (e) {
-      print('OrderService Error loading order items: $e');
+      debugPrint('OrderService Error loading order items: $e');
       return [];
     }
   }
@@ -175,7 +176,7 @@ class OrderService extends GetxController {
       Get.snackbar('Success', 'Order status updated to $status');
       return true;
     } catch (e) {
-      print('OrderService Error updating order status: $e');
+      debugPrint('OrderService Error updating order status: $e');
       Get.snackbar('Error', 'Failed to update order status');
       return false;
     }

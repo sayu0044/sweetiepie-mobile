@@ -10,25 +10,26 @@ import 'package:sweetipie/services/database_service.dart';
 class OrderPaymentController extends GetxController {
   final AuthService _authService = Get.find<AuthService>();
   final DatabaseService _databaseService = Get.find<DatabaseService>();
-  
+
   // PocketBase instance
   final PocketBase pb = PocketBase('http://127.0.0.1:8090');
 
   // Observable variables
   final Rx<Order?> order = Rx<Order?>(null);
   final Rx<RecordModel?> user = Rx<RecordModel?>(null);
-  final RxList<Map<String, dynamic>> orderItemsWithProducts = <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> orderItemsWithProducts =
+      <Map<String, dynamic>>[].obs;
   final RxBool isLoading = true.obs;
   final RxBool isProcessing = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    print('OrderPaymentController: Initializing...');
-    
+    debugPrint('OrderPaymentController: Initializing...');
+
     // Sync auth from AuthService
     _syncAuthFromAuthService();
-    
+
     // Get current user info
     user.value = _authService.currentUser.value;
   }
@@ -37,16 +38,16 @@ class OrderPaymentController extends GetxController {
   void _syncAuthFromAuthService() {
     try {
       final authToken = _authService.pb.authStore.token;
-      final authModel = _authService.pb.authStore.model;
+      final authModel = _authService.pb.authStore.record;
 
-      if (authToken != null && authModel != null) {
+      if (authToken.isNotEmpty) {
         pb.authStore.save(authToken, authModel);
-        print('OrderPaymentController: Auth synced from AuthService');
+        debugPrint('OrderPaymentController: Auth synced from AuthService');
       } else {
-        print('OrderPaymentController: No auth to sync');
+        debugPrint('OrderPaymentController: No auth to sync');
       }
     } catch (e) {
-      print('OrderPaymentController: Error syncing auth: $e');
+      debugPrint('OrderPaymentController: Error syncing auth: $e');
     }
   }
 
@@ -54,18 +55,17 @@ class OrderPaymentController extends GetxController {
   Future<void> loadOrderDetails(String orderId) async {
     try {
       isLoading.value = true;
-      print('OrderPaymentController: Loading order details for: $orderId');
+      debugPrint('OrderPaymentController: Loading order details for: $orderId');
 
       // 1. Load order
       final orderRecord = await pb.collection('orders').getOne(orderId);
       order.value = Order.fromJson(orderRecord.data);
-      print('OrderPaymentController: Order loaded: ${order.value?.id}');
+      debugPrint('OrderPaymentController: Order loaded: ${order.value?.id}');
 
       // 2. Load order items
       await _loadOrderItems(orderId);
-
     } catch (e) {
-      print('OrderPaymentController: Error loading order details: $e');
+      debugPrint('OrderPaymentController: Error loading order details: $e');
       Get.snackbar(
         'Error',
         'Gagal memuat detail pesanan',
@@ -81,20 +81,21 @@ class OrderPaymentController extends GetxController {
   // Load order items with product details
   Future<void> _loadOrderItems(String orderId) async {
     try {
-      print('OrderPaymentController: Loading order items for order: $orderId');
+      debugPrint(
+          'OrderPaymentController: Loading order items for order: $orderId');
 
       // Get order items from PocketBase
       final orderItemsRecords = await pb.collection('order_items').getFullList(
-        filter: 'order_id = "$orderId"',
-        sort: 'created',
-      );
+            filter: 'order_id = "$orderId"',
+            sort: 'created',
+          );
 
       List<Map<String, dynamic>> itemsWithProducts = [];
 
       for (var record in orderItemsRecords) {
         final orderItem = OrderItem.fromJson(record.data);
         final product = _databaseService.getProductById(orderItem.productsId);
-        
+
         itemsWithProducts.add({
           'order_item': orderItem,
           'product': product,
@@ -102,10 +103,10 @@ class OrderPaymentController extends GetxController {
       }
 
       orderItemsWithProducts.value = itemsWithProducts;
-      print('OrderPaymentController: Loaded ${itemsWithProducts.length} order items');
-
+      debugPrint(
+          'OrderPaymentController: Loaded ${itemsWithProducts.length} order items');
     } catch (e) {
-      print('OrderPaymentController: Error loading order items: $e');
+      debugPrint('OrderPaymentController: Error loading order items: $e');
     }
   }
 
@@ -113,7 +114,7 @@ class OrderPaymentController extends GetxController {
   Future<void> confirmQRISPayment() async {
     try {
       isProcessing.value = true;
-      print('OrderPaymentController: Confirming QRIS payment...');
+      debugPrint('OrderPaymentController: Confirming QRIS payment...');
 
       await _updateOrderStatus('completed');
 
@@ -128,9 +129,8 @@ class OrderPaymentController extends GetxController {
 
       // Navigate to success page
       _navigateToSuccessPage();
-
     } catch (e) {
-      print('OrderPaymentController: Error confirming QRIS payment: $e');
+      debugPrint('OrderPaymentController: Error confirming QRIS payment: $e');
       Get.snackbar(
         'Error',
         'Gagal mengkonfirmasi pembayaran. Silakan coba lagi.',
@@ -147,7 +147,7 @@ class OrderPaymentController extends GetxController {
   Future<void> confirmCashPayment() async {
     try {
       isProcessing.value = true;
-      print('OrderPaymentController: Confirming cash payment...');
+      debugPrint('OrderPaymentController: Confirming cash payment...');
 
       await _updateOrderStatus('completed');
 
@@ -162,9 +162,8 @@ class OrderPaymentController extends GetxController {
 
       // Navigate to success page
       _navigateToSuccessPage();
-
     } catch (e) {
-      print('OrderPaymentController: Error confirming cash payment: $e');
+      debugPrint('OrderPaymentController: Error confirming cash payment: $e');
       Get.snackbar(
         'Error',
         'Gagal mengkonfirmasi pembayaran. Silakan coba lagi.',
@@ -191,7 +190,8 @@ class OrderPaymentController extends GetxController {
           ),
           TextButton(
             onPressed: () => Get.back(result: true),
-            style: TextButton.styleFrom(foregroundColor: Get.theme.colorScheme.error),
+            style: TextButton.styleFrom(
+                foregroundColor: Get.theme.colorScheme.error),
             child: const Text('Ya, Batalkan'),
           ),
         ],
@@ -201,7 +201,7 @@ class OrderPaymentController extends GetxController {
     if (result == true) {
       try {
         isProcessing.value = true;
-        print('OrderPaymentController: Cancelling order...');
+        debugPrint('OrderPaymentController: Cancelling order...');
 
         await _updateOrderStatus('cancelled');
 
@@ -216,9 +216,8 @@ class OrderPaymentController extends GetxController {
 
         // Navigate back to checkout or home
         Get.offAllNamed('/home');
-
       } catch (e) {
-        print('OrderPaymentController: Error cancelling order: $e');
+        debugPrint('OrderPaymentController: Error cancelling order: $e');
         Get.snackbar(
           'Error',
           'Gagal membatalkan pesanan. Silakan coba lagi.',
@@ -244,11 +243,10 @@ class OrderPaymentController extends GetxController {
 
       // Update local order object
       order.value = order.value!.copyWith(status: status);
-      print('OrderPaymentController: Order status updated to: $status');
-
+      debugPrint('OrderPaymentController: Order status updated to: $status');
     } catch (e) {
-      print('OrderPaymentController: Error updating order status: $e');
-      throw e;
+      debugPrint('OrderPaymentController: Error updating order status: $e');
+      rethrow;
     }
   }
 
@@ -269,7 +267,7 @@ class OrderPaymentController extends GetxController {
 
   @override
   void onClose() {
-    print('OrderPaymentController: Disposed');
+    debugPrint('OrderPaymentController: Disposed');
     super.onClose();
   }
-} 
+}

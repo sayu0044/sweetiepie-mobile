@@ -3,7 +3,6 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sweetipie/models/cart.dart';
-import 'package:sweetipie/models/product.dart';
 import 'package:sweetipie/services/auth_service.dart';
 import 'package:sweetipie/services/database_service.dart';
 
@@ -23,7 +22,8 @@ class CartServiceTemp extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    print('CartServiceTemp: Initialized with persistent user-isolated storage');
+    debugPrint(
+        'CartServiceTemp: Initialized with persistent user-isolated storage');
 
     // Load cart data from storage on init
     _loadCartFromStorage();
@@ -31,7 +31,7 @@ class CartServiceTemp extends GetxController {
     // Listen to auth changes to update cart when user changes
     _authService.currentUser.listen((user) async {
       if (user != null) {
-        print(
+        debugPrint(
             'CartServiceTemp: User changed to ${user.id}, loading cart from storage...');
 
         // Load from storage when user logs in
@@ -40,10 +40,10 @@ class CartServiceTemp extends GetxController {
         // Then refresh for current user
         _refreshCartForCurrentUser();
 
-        print(
-            'CartServiceTemp: Cart loaded for user ${user.id}, items count: ${cartItemCount}');
+        debugPrint(
+            'CartServiceTemp: Cart loaded for user ${user.id}, items count: $cartItemCount');
       } else {
-        print('CartServiceTemp: User logged out, clearing cart display');
+        debugPrint('CartServiceTemp: User logged out, clearing cart display');
         totalPrice.value = 0.0;
       }
     });
@@ -64,7 +64,7 @@ class CartServiceTemp extends GetxController {
   void _ensureUserCart(String userId) {
     if (!_userCartItems.containsKey(userId)) {
       _userCartItems[userId] = <Cart>[];
-      print('CartServiceTemp: Created new cart for user: $userId');
+      debugPrint('CartServiceTemp: Created new cart for user: $userId');
     }
   }
 
@@ -81,10 +81,10 @@ class CartServiceTemp extends GetxController {
       final prefs = await SharedPreferences.getInstance();
       final cartDataJson = prefs.getString('user_carts');
 
-      print('CartServiceTemp: Checking storage for cart data...');
+      debugPrint('CartServiceTemp: Checking storage for cart data...');
 
       if (cartDataJson != null) {
-        print('CartServiceTemp: Found cart data in storage, parsing...');
+        debugPrint('CartServiceTemp: Found cart data in storage, parsing...');
         final cartData = json.decode(cartDataJson) as Map<String, dynamic>;
 
         // Convert stored data back to Cart objects
@@ -107,23 +107,23 @@ class CartServiceTemp extends GetxController {
           _userCartItems[userId] = cartItems;
         }
 
-        print(
+        debugPrint(
             'CartServiceTemp: Loaded cart data for ${cartData.keys.length} users from storage');
-        print(
+        debugPrint(
             'CartServiceTemp: Available users in storage: ${cartData.keys.toList()}');
 
         // Log current user's cart if exists
         if (currentUserId.isNotEmpty && cartData.containsKey(currentUserId)) {
-          print(
+          debugPrint(
               'CartServiceTemp: Current user ($currentUserId) has ${cartData[currentUserId].length} items in storage');
         }
 
         _refreshCartForCurrentUser();
       } else {
-        print('CartServiceTemp: No cart data found in storage');
+        debugPrint('CartServiceTemp: No cart data found in storage');
       }
     } catch (e) {
-      print('CartServiceTemp Error loading cart from storage: $e');
+      debugPrint('CartServiceTemp Error loading cart from storage: $e');
     }
   }
 
@@ -151,11 +151,11 @@ class CartServiceTemp extends GetxController {
       }
 
       await prefs.setString('user_carts', json.encode(cartData));
-      print('CartServiceTemp: Cart data saved to storage');
-      print(
+      debugPrint('CartServiceTemp: Cart data saved to storage');
+      debugPrint(
           'CartServiceTemp: Saved ${cartData.keys.length} users, current user ($currentUserId) has ${cartData[currentUserId]?.length ?? 0} items');
     } catch (e) {
-      print('CartServiceTemp Error saving cart to storage: $e');
+      debugPrint('CartServiceTemp Error saving cart to storage: $e');
     }
   }
 
@@ -170,14 +170,14 @@ class CartServiceTemp extends GetxController {
   // Add item to cart (local storage)
   Future<bool> addToCart(String productId, int quantity) async {
     if (currentUserId.isEmpty) {
-      print('CartServiceTemp: No user logged in');
+      debugPrint('CartServiceTemp: No user logged in');
       Get.snackbar('Error', 'Please login first');
       return false;
     }
 
     try {
       isLoading.value = true;
-      print(
+      debugPrint(
           'CartServiceTemp: Adding to cart for user $currentUserId - ProductID: $productId, Quantity: $quantity');
 
       // Ensure user has a cart
@@ -196,7 +196,7 @@ class CartServiceTemp extends GetxController {
         final existingItem = userCartItems[existingItemIndex];
         final newQuantity = existingItem.jumlahBarang + quantity;
 
-        print(
+        debugPrint(
             'CartServiceTemp: Updating existing item for user $currentUserId, new quantity: $newQuantity');
 
         userCartItems[existingItemIndex] = existingItem.copyWith(
@@ -228,13 +228,13 @@ class CartServiceTemp extends GetxController {
         _calculateTotalPrice();
         await _saveCartToStorage(); // Save to persistent storage
 
-        print(
+        debugPrint(
             'CartServiceTemp: Added new item to cart for user $currentUserId');
         Get.snackbar('Success', 'Item added to cart');
         return true;
       }
     } catch (e) {
-      print('CartServiceTemp Error adding to cart: $e');
+      debugPrint('CartServiceTemp Error adding to cart: $e');
       Get.snackbar('Error', 'Failed to add item to cart');
     } finally {
       isLoading.value = false;
@@ -269,13 +269,14 @@ class CartServiceTemp extends GetxController {
         _calculateTotalPrice();
         await _saveCartToStorage(); // Save to persistent storage
 
-        print('CartServiceTemp: Updated cart item quantity to $newQuantity');
+        debugPrint(
+            'CartServiceTemp: Updated cart item quantity to $newQuantity');
         return true;
       }
 
       return false;
     } catch (e) {
-      print('CartServiceTemp Error updating cart item: $e');
+      debugPrint('CartServiceTemp Error updating cart item: $e');
       return false;
     }
   }
@@ -299,7 +300,7 @@ class CartServiceTemp extends GetxController {
       Get.snackbar('Success', 'Item removed from cart');
       return true;
     } catch (e) {
-      print('CartServiceTemp Error removing from cart: $e');
+      debugPrint('CartServiceTemp Error removing from cart: $e');
       return false;
     }
   }
@@ -320,7 +321,7 @@ class CartServiceTemp extends GetxController {
       Get.snackbar('Success', 'Cart cleared successfully');
       return true;
     } catch (e) {
-      print('CartServiceTemp Error clearing cart: $e');
+      debugPrint('CartServiceTemp Error clearing cart: $e');
       return false;
     }
   }
@@ -365,7 +366,7 @@ class CartServiceTemp extends GetxController {
     }
 
     totalPrice.value = total;
-    print(
+    debugPrint(
         'CartServiceTemp: Total price calculated: \$${total.toStringAsFixed(2)}');
   }
 

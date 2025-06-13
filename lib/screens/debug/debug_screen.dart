@@ -116,14 +116,14 @@ class DebugScreen extends StatelessWidget {
                       // Get first product for testing
                       if (databaseService.products.isNotEmpty) {
                         final testProduct = databaseService.products.first;
-                        print(
+                        debugPrint(
                             'Debug: Testing cart with product: ${testProduct.id} - ${testProduct.name}');
 
                         final result =
                             await cartService.addToCart(testProduct.id, 1);
-                        print('Debug: Cart add result: $result');
+                        debugPrint('Debug: Cart add result: $result');
                       } else {
-                        print('Debug: No products available for testing');
+                        debugPrint('Debug: No products available for testing');
                         Get.snackbar(
                             'Debug', 'No products available for testing');
                       }
@@ -141,14 +141,14 @@ class DebugScreen extends StatelessWidget {
                       // Get first product for testing
                       if (databaseService.products.isNotEmpty) {
                         final testProduct = databaseService.products.first;
-                        print(
+                        debugPrint(
                             'Debug: Testing like with product: ${testProduct.id} - ${testProduct.name}');
 
                         final result =
                             await likeService.toggleLike(testProduct.id);
-                        print('Debug: Like toggle result: $result');
+                        debugPrint('Debug: Like toggle result: $result');
                       } else {
-                        print('Debug: No products available for testing');
+                        debugPrint('Debug: No products available for testing');
                         Get.snackbar(
                             'Debug', 'No products available for testing');
                       }
@@ -164,7 +164,7 @@ class DebugScreen extends StatelessWidget {
             // Refresh Services Button
             ElevatedButton(
               onPressed: () async {
-                print('Debug: Refreshing all services...');
+                debugPrint('Debug: Refreshing all services...');
 
                 try {
                   final cartService = Get.find<CartService>();
@@ -176,9 +176,9 @@ class DebugScreen extends StatelessWidget {
                   await likeService.refreshLikes();
 
                   Get.snackbar('Debug', 'Services refreshed successfully');
-                  print('Debug: All services refreshed successfully');
+                  debugPrint('Debug: All services refreshed successfully');
                 } catch (e) {
-                  print('Debug: Error refreshing services: $e');
+                  debugPrint('Debug: Error refreshing services: $e');
                   Get.snackbar('Debug Error', 'Failed to refresh services: $e');
                 }
               },

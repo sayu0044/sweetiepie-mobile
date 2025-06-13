@@ -9,12 +9,12 @@ class LikeButtonWidget extends StatelessWidget {
   final Color? unlikedColor;
 
   const LikeButtonWidget({
-    Key? key,
+    super.key,
     required this.productId,
     this.iconSize = 24.0,
     this.likedColor = Colors.red,
     this.unlikedColor = Colors.grey,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +25,10 @@ class LikeButtonWidget extends StatelessWidget {
 
       return GestureDetector(
         onTap: () async {
-          print(
+          debugPrint(
               'LikeButtonWidget: Tapping like for product $productId, current state: $isLiked');
           final result = await likeService.toggleLike(productId);
-          print(
+          debugPrint(
               'LikeButtonWidget: Toggle result: $result, new state should be: ${!isLiked}');
         },
         child: AnimatedSwitcher(
@@ -53,15 +53,15 @@ class LikeIconButton extends StatelessWidget {
   final EdgeInsets? padding;
 
   const LikeIconButton({
-    Key? key,
+    super.key,
     required this.productId,
     this.iconSize = 24.0,
     this.likedColor = Colors.red,
     this.unlikedColor = Colors.grey,
     this.padding,
-  }) : super(key: key);
+  });
 
-  @override
+  @override 
   Widget build(BuildContext context) {
     final LikeService likeService = Get.find<LikeService>();
 
@@ -71,10 +71,10 @@ class LikeIconButton extends StatelessWidget {
       return IconButton(
         padding: padding ?? const EdgeInsets.all(8.0),
         onPressed: () async {
-          print(
+          debugPrint(
               'LikeIconButton: Tapping like for product $productId, current state: $isLiked');
           final result = await likeService.toggleLike(productId);
-          print(
+          debugPrint(
               'LikeIconButton: Toggle result: $result, new state should be: ${!isLiked}');
         },
         icon: AnimatedSwitcher(

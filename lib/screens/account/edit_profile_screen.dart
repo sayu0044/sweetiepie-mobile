@@ -147,7 +147,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       right: 0,
                       child: GestureDetector(
                         onTap: () {
-                          // TODO: Implement image picker
                           Get.snackbar(
                               'Info', 'Image picker will be implemented');
                         },

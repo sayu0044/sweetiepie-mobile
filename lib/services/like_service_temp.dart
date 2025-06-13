@@ -19,7 +19,8 @@ class LikeServiceTemp extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    print('LikeServiceTemp: Initialized with persistent user-isolated storage');
+    debugPrint(
+        'LikeServiceTemp: Initialized with persistent user-isolated storage');
 
     // Load likes data from storage on init
     _loadLikesFromStorage();
@@ -27,7 +28,7 @@ class LikeServiceTemp extends GetxController {
     // Listen to auth changes
     _authService.currentUser.listen((user) async {
       if (user != null) {
-        print(
+        debugPrint(
             'LikeServiceTemp: User changed to ${user.id}, loading likes from storage...');
 
         // Load from storage when user logs in
@@ -36,8 +37,8 @@ class LikeServiceTemp extends GetxController {
         // Then ensure user likes exist
         _ensureUserLikes(user.id);
 
-        print(
-            'LikeServiceTemp: Likes loaded for user ${user.id}, count: ${likedItemCount}');
+        debugPrint(
+            'LikeServiceTemp: Likes loaded for user ${user.id}, count: $likedItemCount');
       }
     });
   }
@@ -81,11 +82,11 @@ class LikeServiceTemp extends GetxController {
           _userLikedItems[userId] = likeItems;
         }
 
-        print(
+        debugPrint(
             'LikeServiceTemp: Loaded likes data for ${likesData.keys.length} users');
       }
     } catch (e) {
-      print('LikeServiceTemp Error loading likes from storage: $e');
+      debugPrint('LikeServiceTemp Error loading likes from storage: $e');
     }
   }
 
@@ -112,9 +113,9 @@ class LikeServiceTemp extends GetxController {
       }
 
       await prefs.setString('user_likes', json.encode(likesData));
-      print('LikeServiceTemp: Likes data saved to storage');
+      debugPrint('LikeServiceTemp: Likes data saved to storage');
     } catch (e) {
-      print('LikeServiceTemp Error saving likes to storage: $e');
+      debugPrint('LikeServiceTemp Error saving likes to storage: $e');
     }
   }
 
@@ -122,7 +123,7 @@ class LikeServiceTemp extends GetxController {
   void _ensureUserLikes(String userId) {
     if (!_userLikedItems.containsKey(userId)) {
       _userLikedItems[userId] = <Like>[];
-      print('LikeServiceTemp: Created new likes for user: $userId');
+      debugPrint('LikeServiceTemp: Created new likes for user: $userId');
     }
   }
 
@@ -136,13 +137,13 @@ class LikeServiceTemp extends GetxController {
   // Add/Toggle like for a product (local storage)
   Future<bool> toggleLike(String productId) async {
     if (currentUserId.isEmpty) {
-      print('LikeServiceTemp: No user logged in');
+      debugPrint('LikeServiceTemp: No user logged in');
       Get.snackbar('Error', 'Please login first');
       return false;
     }
 
     try {
-      print(
+      debugPrint(
           'LikeServiceTemp: Toggling like for user $currentUserId - ProductID: $productId');
 
       // Ensure user has likes storage
@@ -156,7 +157,7 @@ class LikeServiceTemp extends GetxController {
 
       if (existingLike != null) {
         // Unlike - remove from user's local storage
-        print(
+        debugPrint(
             'LikeServiceTemp: Removing like for user $currentUserId, product: $productId');
         userLikedItems.removeWhere((like) =>
             like.id == existingLike.id && like.usersId == currentUserId);
@@ -179,12 +180,12 @@ class LikeServiceTemp extends GetxController {
 
         await _saveLikesToStorage(); // Save to persistent storage
         _triggerUIUpdate(); // Force UI update
-        print('LikeServiceTemp: Added new like for user $currentUserId');
+        debugPrint('LikeServiceTemp: Added new like for user $currentUserId');
         Get.snackbar('Success', 'Added to favorites');
         return true; // Product is now liked
       }
     } catch (e) {
-      print('LikeServiceTemp Error toggling like: $e');
+      debugPrint('LikeServiceTemp Error toggling like: $e');
       Get.snackbar('Error', 'Failed to update favorites');
       return false;
     }
@@ -198,7 +199,7 @@ class LikeServiceTemp extends GetxController {
     final userLikes = likedItems; // This already filters by current user
     final result = userLikes.any((like) =>
         like.productsId == productId && like.usersId == currentUserId);
-    print(
+    debugPrint(
         'LikeServiceTemp: Checking isLiked for $productId by user $currentUserId: $result');
     return result;
   }
@@ -236,7 +237,7 @@ class LikeServiceTemp extends GetxController {
 
       return false;
     } catch (e) {
-      print('LikeServiceTemp Error removing like: $e');
+      debugPrint('LikeServiceTemp Error removing like: $e');
       return false;
     }
   }
@@ -254,7 +255,7 @@ class LikeServiceTemp extends GetxController {
       Get.snackbar('Success', 'All favorites cleared');
       return true;
     } catch (e) {
-      print('LikeServiceTemp Error clearing likes: $e');
+      debugPrint('LikeServiceTemp Error clearing likes: $e');
       return false;
     }
   }

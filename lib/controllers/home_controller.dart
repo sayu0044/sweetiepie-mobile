@@ -7,7 +7,7 @@ class HomeController extends GetxController {
   RxString userName = 'Guest'.obs;
   RxString userAvatar = ''.obs;
 
-  static const String GUEST_AVATAR = 'assets/images/guest.png';
+  static const String guestAvatar = 'assets/images/guest.png';
 
   @override
   void onInit() {
@@ -25,14 +25,14 @@ class HomeController extends GetxController {
       // Check if user has avatar
       if (user.data['avatar'] != null && user.data['avatar'].isNotEmpty) {
         final avatarUrl =
-            '${_authService.pb.baseUrl}/api/files/${user.collectionId}/${user.id}/${user.data['avatar']}';
+            '${_authService.pb.baseURL}/api/files/${user.collectionId}/${user.id}/${user.data['avatar']}';
         userAvatar.value = avatarUrl;
       } else {
-        userAvatar.value = GUEST_AVATAR;
+        userAvatar.value = guestAvatar;
       }
     } else {
       userName.value = 'Guest';
-      userAvatar.value = GUEST_AVATAR;
+      userAvatar.value = guestAvatar;
     }
   }
 }

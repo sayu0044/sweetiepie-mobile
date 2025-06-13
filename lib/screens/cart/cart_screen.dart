@@ -11,23 +11,23 @@ class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
 
   @override
-  _CartScreenState createState() => _CartScreenState();
+  CartScreenState createState() => CartScreenState();
 }
 
-class _CartScreenState extends State<CartScreen> {
-  final CartController cartController = Get.find<CartController>();
-
+class CartScreenState extends State<CartScreen> {
   @override
   void initState() {
     super.initState();
     // Force refresh cart when screen loads to ensure latest data
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      cartController.forceRefreshCart();
+      Get.find<CartController>().forceRefreshCart();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final CartController cartController = Get.find<CartController>();
+
     return Scaffold(
       backgroundColor: Colors.pink[50],
       appBar: AppBar(
@@ -172,7 +172,8 @@ class _CartScreenState extends State<CartScreen> {
                                       borderRadius: BorderRadius.circular(16),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black.withOpacity(0.05),
+                                          color: Colors.black
+                                              .withValues(alpha: 0.05),
                                           blurRadius: 8,
                                           offset: const Offset(0, 4),
                                         ),
@@ -372,7 +373,7 @@ class _CartScreenState extends State<CartScreen> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 8,
                   offset: const Offset(0, -2),
                 ),
@@ -440,7 +441,8 @@ class _CartScreenState extends State<CartScreen> {
                               if (success) {
                                 Get.toNamed('/checkout');
                               } else {
-                                NotificationUtils.showError('Gagal memproses checkout. Silakan coba lagi.');
+                                NotificationUtils.showError(
+                                    'Gagal memproses checkout. Silakan coba lagi.');
                               }
                             }
                           : null,

@@ -234,7 +234,7 @@ class CheckoutScreen extends StatelessWidget {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
@@ -264,131 +264,134 @@ class CheckoutScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Bayar di Kasir
             Obx(() => Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: controller.selectedPaymentMethod.value == 'Bayar di kasir'
-                      ? AppTheme.primaryColor
-                      : Colors.grey[300]!,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: RadioListTile<String>(
-                value: 'Bayar di kasir',
-                groupValue: controller.selectedPaymentMethod.value,
-                onChanged: (value) {
-                  if (value != null) {
-                    controller.selectedPaymentMethod.value = value;
-                  }
-                },
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                title: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.green[100],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.store,
-                        color: Colors.green[700],
-                        size: 24,
-                      ),
+                  margin: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: controller.selectedPaymentMethod.value ==
+                              'Bayar di kasir'
+                          ? AppTheme.primaryColor
+                          : Colors.grey[300]!,
+                      width: 2,
                     ),
-                    const SizedBox(width: 12),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Bayar di Kasir',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: RadioListTile<String>(
+                    value: 'Bayar di kasir',
+                    groupValue: controller.selectedPaymentMethod.value,
+                    onChanged: (value) {
+                      if (value != null) {
+                        controller.selectedPaymentMethod.value = value;
+                      }
+                    },
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    title: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.green[100],
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          Text(
-                            'Bayar langsung di kasir saat mengambil pesanan',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12,
-                            ),
+                          child: Icon(
+                            Icons.store,
+                            color: Colors.green[700],
+                            size: 24,
                           ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Bayar di Kasir',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Text(
+                                'Bayar langsung di kasir saat mengambil pesanan',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                activeColor: AppTheme.primaryColor,
-              ),
-            )),
+                    activeColor: AppTheme.primaryColor,
+                  ),
+                )),
 
             // QRIS
             Obx(() => Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: controller.selectedPaymentMethod.value == 'QRIS'
-                      ? AppTheme.primaryColor
-                      : Colors.grey[300]!,
-                  width: 2,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: RadioListTile<String>(
-                value: 'QRIS',
-                groupValue: controller.selectedPaymentMethod.value,
-                onChanged: (value) {
-                  if (value != null) {
-                    controller.selectedPaymentMethod.value = value;
-                  }
-                },
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                title: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.red[100],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.qr_code,
-                        color: Colors.red[700],
-                        size: 24,
-                      ),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: controller.selectedPaymentMethod.value == 'QRIS'
+                          ? AppTheme.primaryColor
+                          : Colors.grey[300]!,
+                      width: 2,
                     ),
-                    const SizedBox(width: 12),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'QRIS',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: RadioListTile<String>(
+                    value: 'QRIS',
+                    groupValue: controller.selectedPaymentMethod.value,
+                    onChanged: (value) {
+                      if (value != null) {
+                        controller.selectedPaymentMethod.value = value;
+                      }
+                    },
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    title: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.red[100],
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          Text(
-                            'Bayar menggunakan aplikasi e-wallet atau mobile banking',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 12,
-                            ),
+                          child: Icon(
+                            Icons.qr_code,
+                            color: Colors.red[700],
+                            size: 24,
                           ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'QRIS',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Text(
+                                'Bayar menggunakan aplikasi e-wallet atau mobile banking',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                activeColor: AppTheme.primaryColor,
-              ),
-            )),
+                    activeColor: AppTheme.primaryColor,
+                  ),
+                )),
           ],
         ),
       ),
@@ -422,7 +425,8 @@ class CheckoutScreen extends StatelessWidget {
               onChanged: (value) => controller.orderNotes.value = value,
               maxLines: 3,
               decoration: InputDecoration(
-                hintText: 'Tambahkan catatan khusus untuk pesanan Anda (opsional)',
+                hintText:
+                    'Tambahkan catatan khusus untuk pesanan Anda (opsional)',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide(color: Colors.grey[300]!),
@@ -463,7 +467,8 @@ class CheckoutScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            _buildPriceRow('Subtotal (${controller.totalItems.value} items)', controller.totalPrice.value),
+            _buildPriceRow('Subtotal (${controller.totalItems.value} items)',
+                controller.totalPrice.value),
             const Divider(thickness: 1, height: 24),
             _buildPriceRow(
               'Total',
@@ -507,7 +512,8 @@ class CheckoutScreen extends StatelessWidget {
           width: double.infinity,
           height: 56,
           child: ElevatedButton(
-            onPressed: controller.isProcessing.value || controller.selectedPaymentMethod.value.isEmpty
+            onPressed: controller.isProcessing.value ||
+                    controller.selectedPaymentMethod.value.isEmpty
                 ? null
                 : () async {
                     await controller.processCheckout();

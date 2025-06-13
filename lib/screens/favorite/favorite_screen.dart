@@ -36,7 +36,7 @@ class FavoriteScreen extends StatelessWidget {
         // Get liked product IDs from LikeServiceTemp
         final likedProductIds = likeService.likedProductIds;
 
-        print('FavoriteScreen: Liked product IDs: $likedProductIds');
+        debugPrint('FavoriteScreen: Liked product IDs: $likedProductIds');
 
         if (likedProductIds.isEmpty) {
           return Center(
@@ -79,7 +79,7 @@ class FavoriteScreen extends StatelessWidget {
             .where((product) => likedProductIds.contains(product.id))
             .toList();
 
-        print(
+        debugPrint(
             'FavoriteScreen: Found ${favoriteProducts.length} favorite products');
 
         if (favoriteProducts.isEmpty) {
@@ -130,7 +130,7 @@ class FavoriteScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -168,8 +168,8 @@ class FavoriteScreen extends StatelessWidget {
                           top: 8,
                           child: Container(
                             padding: const EdgeInsets.all(8),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.9),
                               shape: BoxShape.circle,
                             ),
                             child: LikeButtonWidget(

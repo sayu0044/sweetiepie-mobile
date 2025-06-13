@@ -10,10 +10,10 @@ class ProductCardWidget extends StatelessWidget {
   final VoidCallback? onTap;
 
   const ProductCardWidget({
-    Key? key,
+    super.key,
     required this.product,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +60,7 @@ class ProductCardWidget extends StatelessWidget {
                   right: 8,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                       shape: BoxShape.circle,
                     ),
                     child: LikeIconButton(
@@ -133,7 +133,7 @@ class ProductCardWidget extends StatelessWidget {
                                         color: Colors.white),
                                     iconSize: 16,
                                     onPressed: () async {
-                                      print(
+                                      debugPrint(
                                           'ProductCard: Decreasing quantity for product ${product.id}');
                                       // Get cart item to update quantity
                                       final cartItems =
@@ -179,7 +179,7 @@ class ProductCardWidget extends StatelessWidget {
                                         color: Colors.white),
                                     iconSize: 16,
                                     onPressed: () async {
-                                      print(
+                                      debugPrint(
                                           'ProductCard: Increasing quantity for product ${product.id}');
                                       // Add one more quantity to this specific product
                                       await cartController.addToCart(product,

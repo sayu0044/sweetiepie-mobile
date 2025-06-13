@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
           _emailController.text.trim(),
           _passwordController.text,
         );
-        Get.offAllNamed(Routes.HOME);
+        Get.offAllNamed(Routes.home);
       } catch (e) {
         Get.snackbar(
           'Error',
@@ -65,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 40),
                 // Logo
                 Center(
-                  child: Container(
+                  child: SizedBox(
                     width: 120,
                     height: 120,
                     child: Image.asset(
@@ -75,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Email Field
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withValues(alpha: 0.05),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -150,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withValues(alpha: 0.05),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -255,7 +255,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                     ),
                     GestureDetector(
-                      onTap: () => Get.toNamed(Routes.REGISTER),
+                      onTap: () => Get.toNamed(Routes.register),
                       child: Text(
                         'Register now',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(

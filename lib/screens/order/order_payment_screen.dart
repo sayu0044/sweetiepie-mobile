@@ -153,7 +153,7 @@ class OrderPaymentScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.1),
+                    color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -226,7 +226,7 @@ class OrderPaymentScreen extends StatelessWidget {
 
   Widget _buildCustomerInfoCard(OrderPaymentController controller) {
     final user = controller.user.value;
-    
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -293,7 +293,8 @@ class OrderPaymentScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.shopping_cart_outlined, color: AppTheme.primaryColor),
+                Icon(Icons.shopping_cart_outlined,
+                    color: AppTheme.primaryColor),
                 const SizedBox(width: 8),
                 const Text(
                   'Item Pesanan',
@@ -308,7 +309,7 @@ class OrderPaymentScreen extends StatelessWidget {
             ...controller.orderItemsWithProducts.map((item) {
               final orderItem = item['order_item'];
               final product = item['product'];
-              
+
               return Container(
                 margin: const EdgeInsets.only(bottom: 12),
                 padding: const EdgeInsets.all(12),
@@ -369,7 +370,7 @@ class OrderPaymentScreen extends StatelessWidget {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
@@ -378,7 +379,7 @@ class OrderPaymentScreen extends StatelessWidget {
 
   Widget _buildPriceSummaryCard(OrderPaymentController controller) {
     final order = controller.order.value!;
-    
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -429,7 +430,7 @@ class OrderPaymentScreen extends StatelessWidget {
 
   Widget _buildPaymentMethodCard(OrderPaymentController controller) {
     final order = controller.order.value!;
-    
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -455,9 +456,10 @@ class OrderPaymentScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppTheme.primaryColor.withOpacity(0.1),
+                color: AppTheme.primaryColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppTheme.primaryColor.withOpacity(0.3)),
+                border: Border.all(
+                    color: AppTheme.primaryColor.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
@@ -477,7 +479,7 @@ class OrderPaymentScreen extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Show QR Code for QRIS
             if (order.paymentMethod == 'QRIS') ...[
               const SizedBox(height: 16),
@@ -502,7 +504,8 @@ class OrderPaymentScreen extends StatelessWidget {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.qr_code, size: 64, color: Colors.grey[400]),
+                              Icon(Icons.qr_code,
+                                  size: 64, color: Colors.grey[400]),
                               const SizedBox(height: 8),
                               Text(
                                 'QR Code tidak ditemukan',
@@ -533,7 +536,7 @@ class OrderPaymentScreen extends StatelessWidget {
 
   Widget _buildPaymentActions(OrderPaymentController controller) {
     final order = controller.order.value!;
-    
+
     if (order.status.toLowerCase() != 'pending') {
       return const SizedBox.shrink();
     }
@@ -545,8 +548,8 @@ class OrderPaymentScreen extends StatelessWidget {
             width: double.infinity,
             height: 56,
             child: ElevatedButton(
-              onPressed: controller.isProcessing.value 
-                  ? null 
+              onPressed: controller.isProcessing.value
+                  ? null
                   : () => controller.confirmQRISPayment(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
@@ -563,7 +566,8 @@ class OrderPaymentScreen extends StatelessWidget {
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         ),
                         SizedBox(width: 12),
@@ -592,8 +596,8 @@ class OrderPaymentScreen extends StatelessWidget {
             width: double.infinity,
             height: 56,
             child: OutlinedButton(
-              onPressed: controller.isProcessing.value 
-                  ? null 
+              onPressed: controller.isProcessing.value
+                  ? null
                   : () => controller.cancelOrder(),
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: Colors.red, width: 2),
@@ -621,8 +625,8 @@ class OrderPaymentScreen extends StatelessWidget {
             width: double.infinity,
             height: 56,
             child: ElevatedButton(
-              onPressed: controller.isProcessing.value 
-                  ? null 
+              onPressed: controller.isProcessing.value
+                  ? null
                   : () => controller.confirmCashPayment(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
@@ -639,7 +643,8 @@ class OrderPaymentScreen extends StatelessWidget {
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         ),
                         SizedBox(width: 12),
@@ -668,8 +673,8 @@ class OrderPaymentScreen extends StatelessWidget {
             width: double.infinity,
             height: 56,
             child: OutlinedButton(
-              onPressed: controller.isProcessing.value 
-                  ? null 
+              onPressed: controller.isProcessing.value
+                  ? null
                   : () => controller.cancelOrder(),
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: Colors.red, width: 2),
@@ -694,9 +699,19 @@ class OrderPaymentScreen extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
     ];
     return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
-} 
+}

@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Test file to check SharedPreferences storage
 Future<void> testStorage() async {
-  print('=== TESTING STORAGE ===');
+  debugPrint('=== TESTING STORAGE ===');
 
   final prefs = await SharedPreferences.getInstance();
 
@@ -22,25 +23,25 @@ Future<void> testStorage() async {
   };
 
   await prefs.setString('test_carts', json.encode(testData));
-  print('✅ Test data written to storage');
+  debugPrint('✅ Test data written to storage');
 
   // Test read
   final readData = prefs.getString('test_carts');
   if (readData != null) {
     final decoded = json.decode(readData);
-    print('✅ Test data read from storage: $decoded');
+    debugPrint('✅ Test data read from storage: $decoded');
   } else {
-    print('❌ Failed to read test data');
+    debugPrint('❌ Failed to read test data');
   }
 
   // Check actual cart data
   final actualCartData = prefs.getString('user_carts');
   if (actualCartData != null) {
     final decoded = json.decode(actualCartData);
-    print('✅ Actual cart data found: $decoded');
+    debugPrint('✅ Actual cart data found: $decoded');
   } else {
-    print('❌ No actual cart data found');
+    debugPrint('❌ No actual cart data found');
   }
 
-  print('=== STORAGE TEST COMPLETE ===');
+  debugPrint('=== STORAGE TEST COMPLETE ===');
 }
