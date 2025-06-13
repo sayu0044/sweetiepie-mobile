@@ -108,7 +108,7 @@ class CartService extends GetxController {
       print('DEBUG: All cart records in database:');
       for (final record in allRecords) {
         print(
-            '  Cart ID: ${record.id}, users_id: ${record.data['users_id']}, products_id: ${record.data['products_id']}, quantity: ${record.data['jumlah_barang']}');
+            '  Cart ID: ${record.id}, users_id: ${record.data['users_id']}, products_id: ${record.data['products_id']}, quantity: ${record.data['jumlah_barang']}, selected: ${record.data['is_selected']}');
       }
       print('DEBUG: Current user ID: $currentUserId');
 
@@ -123,7 +123,7 @@ class CartService extends GetxController {
         try {
           final cart = _recordToCart(record);
           print(
-              'DEBUG: Parsed cart - ID: ${cart.id}, ProductID: ${cart.productsId}, UserID: ${cart.usersId}, Quantity: ${cart.jumlahBarang}');
+              'DEBUG: Parsed cart - ID: ${cart.id}, ProductID: ${cart.productsId}, UserID: ${cart.usersId}, Quantity: ${cart.jumlahBarang}, Selected: ${cart.isSelected}');
           if (cart.id.isNotEmpty) {
             cartItems.add(cart);
             print('DEBUG: Added cart to list');
@@ -366,24 +366,33 @@ class CartService extends GetxController {
     try {
       final cartItem = cartItems.firstWhereOrNull((item) => item.id == cartId);
       if (cartItem == null) {
-        print('CartService: Cart item not found');
+        print('CartService: Cart item not found for ID: $cartId');
         return false;
       }
 
-      final newSelectionState = !cartItem.isSelected;
+      final currentState = cartItem.isSelected;
+      final newSelectionState = !currentState;
+      print(
+          'CartService: Toggling selection for cart $cartId from $currentState to $newSelectionState');
+
       final updateData = {
         'is_selected': newSelectionState,
       };
 
       final record =
           await pb.collection('carts').update(cartId, body: updateData);
+      print('CartService: Database updated successfully');
+
       final updatedItem = _recordToCart(record);
+      print(
+          'CartService: Updated item selection state: ${updatedItem.isSelected}');
 
       // Update local cart items
       final index = cartItems.indexWhere((item) => item.id == cartId);
       if (index != -1) {
         cartItems[index] = updatedItem;
         _calculateSelectedTotalPrice();
+        print('CartService: Local cart updated at index $index');
       }
 
       await fetchCartItems();
@@ -404,20 +413,27 @@ class CartService extends GetxController {
     }
 
     try {
+      print(
+          'CartService: ${selected ? 'Selecting' : 'Unselecting'} all ${cartItems.length} items');
+
       // Update all items in database
       for (final item in cartItems) {
         final updateData = {
           'is_selected': selected,
         };
+        print('CartService: Updating cart ${item.id} to selected: $selected');
         await pb.collection('carts').update(item.id, body: updateData);
       }
 
       // Update local items
       for (int i = 0; i < cartItems.length; i++) {
         cartItems[i] = cartItems[i].copyWith(isSelected: selected);
+        print(
+            'CartService: Local item ${i} updated to selected: ${cartItems[i].isSelected}');
       }
 
       _calculateSelectedTotalPrice();
+      print('CartService: Refreshing cart after selectAllItems');
       await fetchCartItems();
     } catch (e) {
       print('CartService: Error selecting all items: $e');

@@ -32,10 +32,16 @@ class CartController extends GetxController {
 
   bool get isLoading => _cartService.isLoading.value;
 
-  // Check if all items are selected
-  bool get allItemsSelected {
+  // Check if all items are selected (tristate: true=all, false=none, null=some)
+  bool? get allItemsSelected {
     if (cartItems.isEmpty) return false;
-    return cartItems.every((item) => item.isSelected);
+
+    final selectedCount = cartItems.where((item) => item.isSelected).length;
+    final totalCount = cartItems.length;
+
+    if (selectedCount == 0) return false; // None selected
+    if (selectedCount == totalCount) return true; // All selected
+    return null; // Some selected (indeterminate state)
   }
 
   // Check if any items are selected
@@ -65,8 +71,8 @@ class CartController extends GetxController {
   }
 
   // Select/deselect all items
-  void selectAllItems(bool selected) {
-    _cartService.selectAllItems(selected);
+  Future<void> selectAllItems(bool selected) async {
+    await _cartService.selectAllItems(selected);
   }
 
   // Proceed to checkout with selected items

@@ -91,26 +91,47 @@ class _CartScreenState extends State<CartScreen> {
                                         value: cartController.allItemsSelected,
                                         tristate:
                                             true, // Allow indeterminate state
-                                        onChanged: (bool? value) {
-                                          if (value == null) {
-                                            // Indeterminate to false
-                                            cartController
-                                                .selectAllItems(false);
+                                        onChanged: (bool? value) async {
+                                          // Handle tristate logic
+                                          final currentState =
+                                              cartController.allItemsSelected;
+                                          bool shouldSelectAll;
+
+                                          if (currentState == true) {
+                                            // All selected -> unselect all
+                                            shouldSelectAll = false;
                                           } else {
-                                            cartController
-                                                .selectAllItems(value);
+                                            // None or some selected -> select all
+                                            shouldSelectAll = true;
                                           }
+
+                                          await cartController
+                                              .selectAllItems(shouldSelectAll);
                                         },
                                         activeColor: AppTheme.primaryColor,
                                       )),
-                                  Text(
-                                    'Select All',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey[700],
-                                    ),
-                                  ),
+                                  Obx(() {
+                                    final state =
+                                        cartController.allItemsSelected;
+                                    String text;
+
+                                    if (state == true) {
+                                      text = 'Unselect All';
+                                    } else if (state == false) {
+                                      text = 'Select All';
+                                    } else {
+                                      text = 'Select All';
+                                    }
+
+                                    return Text(
+                                      text,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.grey[700],
+                                      ),
+                                    );
+                                  }),
                                   const Spacer(),
                                   Obx(() => Text(
                                         '${cartController.selectedItemCount} of ${cartController.itemCount} items selected',
